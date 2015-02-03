@@ -4,9 +4,15 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 
 
 public class MainActivity extends ActionBarActivity {
+    private ObservableListView listView;
+    private static final boolean TOOLBAR_IS_STICKY = true;
+    private View mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
