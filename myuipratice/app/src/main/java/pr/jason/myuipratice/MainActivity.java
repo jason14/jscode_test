@@ -1,25 +1,37 @@
 package pr.jason.myuipratice;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import pr.jason.myuipratice.view.SlidingTabLayout;
 
 
 public class MainActivity extends ActionBarActivity {
-    private ObservableListView listView;
-    private static final boolean TOOLBAR_IS_STICKY = true;
+    private SlidingTabLayout mSlidingTabLayout;
+    private ViewPager mViewPager;
     private View mToolbar;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       
+       if(savedInstanceState == null){
+           FragmentTransaction transaction = getFragmentManager().beginTransaction();
+       }
+
+        fm = this.getSupportFragmentManager();
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager.setAdapter(new MainViewPagerAdpater(fm));
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setViewPager(mViewPager);
     }
 
 
