@@ -20,7 +20,38 @@ public class MainViewPagerAdpater extends FragmentPagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
-        return null;
+        switch(position){
+            case 0:
+                return FavoriteFragment.newInstance(0,"즐겨찾기");
+
+            case 1:
+                return ContactsFragment.newInstance(1,"연락처");
+
+            case 2:
+                return RecentFragment.newInstance(2,"최근");
+
+            default:
+                return null;
+        }
+
+
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch(position) {
+            case 0:
+                return "즐겨찾기";
+
+            case 1:
+                return "연락처";
+
+            case 2:
+                return "최근";
+
+            default:
+                return null;
+        }
     }
 
     @Override

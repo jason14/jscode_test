@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
      tools:context=".MainActivity">
     <RelativeLayout
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
@@ -16,10 +15,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.example.android.common.view.SlidingTabLayout
+            <com.astuetz.PagerSlidingTabStrip
                 android:id="@+id/sliding_tabs"
+                app:pstsShouldExpand="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="48dp"
+                app:pstsDividerColor="@color/colorControlHighlight"
+                app:pstsIndicatorColor="@color/colorControlNormal"
+                app:pstsUnderlineColor="@color/colorPrimary"
+                app:pstsTabPaddingLeftRight="14dp" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"

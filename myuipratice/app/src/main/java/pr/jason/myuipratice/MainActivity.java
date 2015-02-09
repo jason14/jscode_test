@@ -9,11 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import pr.jason.myuipratice.view.SlidingTabLayout;
+import com.astuetz.PagerSlidingTabStrip;
 
 
 public class MainActivity extends ActionBarActivity {
-    private SlidingTabLayout mSlidingTabLayout;
+    private PagerSlidingTabStrip mSlidingTabLayout;
     private ViewPager mViewPager;
     private View mToolbar;
     private FragmentManager fm;
@@ -29,11 +29,10 @@ public class MainActivity extends ActionBarActivity {
 
         fm = this.getSupportFragmentManager();
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new MainViewPagerAdpater(fm));
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
+        mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
