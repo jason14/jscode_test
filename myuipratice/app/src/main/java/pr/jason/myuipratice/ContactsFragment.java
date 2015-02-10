@@ -11,12 +11,26 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ImageView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.InputStream;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import pr.jason.myuipratice.widget.IndexableListView;
 
 /**
  * Created by Jaesin on 2015-02-05.
@@ -27,7 +41,8 @@ public class ContactsFragment extends Fragment{
     private int page;
     private Context context;
     private ContactsClass contactsClass;
-
+    private ArrayList<ContactsClass> contactsArray;
+    DisplayImageOptions options;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -43,31 +58,61 @@ public class ContactsFragment extends Fragment{
         page= getArguments().getInt("somePage",0);
         title = getArguments().getString("someTitle");
         context = getActivity().getApplicationContext();
+
+        options = new DisplayImageOptions.Builder()
+                /*.showImageOnLoading(R.drawable.ic_stub)
+                .showImageForEmptyUri(R.drawable.ic_empty)
+                .showImageOnFail(R.drawable.ic_error)*/
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new RoundedBitmapDisplayer(20))
+                .build();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment,container,false);
-        contactsClass = new ContactsClass();
+        //연락처 목록 받기
         getPhoneBoolList();
-        ListView listView = (ListView)view.findViewById(R.id.listview);
-
+        //정렬
+        setSortArrayList();
+        IndexableListView listView = (IndexableListView)view.findViewById(R.id.listview);
+        ContactAdapter contactAdapter = new ContactAdapter(context,R.layout.contacts_row,contactsArray,options);
+        listView.setAdapter(contactAdapter);
+        listView.setFastScrollEnabled(true);
+        Log.e("연락처 배열 개수", "" + contactsArray.size());
         return view;
     }
 
-    public void getPhoneBoolList(){
-        Uri contactsUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AnimateFirstDisplayListener.displayedImages.clear();
+    }
 
+    public void setSortArrayList(){
+        final Comparator<ContactsClass> comparator = new Comparator<ContactsClass>() {
+            @Override
+            public int compare(ContactsClass lhs, ContactsClass rhs) {
+                return Collator.getInstance().compare(lhs.friendName,rhs.friendName);
+            }
+        };
+
+        Collections.sort(contactsArray,comparator);
+
+    }
+
+    public void getPhoneBoolList(){
+
+        contactsArray = new ArrayList<ContactsClass>();
+        Uri contactsUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String disId = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String disName = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
         String number = ContactsContract.CommonDataKinds.Phone.NUMBER;
 
         Cursor cursor = context.getContentResolver().query(contactsUri, new String[]{disId,disName,number},null,null,null);
-        contactsClass.friendId = new long[cursor.getCount()];
-        contactsClass.friendPicture = new Bitmap[cursor.getCount()];
-        contactsClass.friendCount = cursor.getCount();
-        contactsClass.friendName = new String[cursor.getCount()];
-        contactsClass.friendName = new String[cursor.getCount()];
+
         int i = 0;
         if(cursor != null){
             cursor.moveToFirst();
@@ -76,24 +121,46 @@ public class ContactsFragment extends Fragment{
                 String name = cursor.getString(1);
                 String phone = cursor.getString(2);
 
-                contactsClass.friendId[i] = id;
-                contactsClass.friendName[i] = name;
-                contactsClass.friendNum[i] = phone;
+                contactsClass = null;
+                contactsClass = new ContactsClass();
+
+                contactsClass.friendId = id;
+                contactsClass.friendName = name;
+                contactsClass.friendNum = phone;
 
                 ContentResolver contentResolver = context.getContentResolver();
                 Uri imageUrl = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,id);
+                contactsClass.friendPictureUrl = imageUrl;
                 InputStream io = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver,imageUrl);
                 if(io != null){
                     Bitmap photo = BitmapFactory.decodeStream(io);
-                    contactsClass.friendPicture[i] = photo;
+                    contactsClass.friendPicture = photo;
 
                 }else{
-                    contactsClass.friendPicture[i] = null;
+                    contactsClass.friendPicture = null;
                 }
+                contactsArray.add(contactsClass);
                 i++;
                 cursor.moveToNext();
             }
             cursor.close();
+        }
+    }
+
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
         }
     }
 }

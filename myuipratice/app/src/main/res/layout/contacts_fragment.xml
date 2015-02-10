@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#aa00cc">
-    <ListView
+    android:background="#ffffff">
+    <pr.jason.myuipratice.widget.IndexableListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/listview"/>
+        android:id="@+id/listview"
+       />
 </LinearLayout>

@@ -1,6 +1,7 @@
 package pr.jason.myuipratice;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -26,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
        if(savedInstanceState == null){
            FragmentTransaction transaction = getFragmentManager().beginTransaction();
        }
-
+        initImageLoader(this);
         fm = this.getSupportFragmentManager();
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
@@ -54,5 +59,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void initImageLoader(Context context) {
+        // This configuration tuning is custom. You can tune every option, you may tune some of them,
+        // or you can create default configuration by
+        //  ImageLoaderConfiguration.createDefault(this);
+        // method.
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .diskCacheSize(50 * 1024 * 1024) // 50 Mb
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .writeDebugLogs() // Remove for release app
+                .build();
+        // Initialize ImageLoader with configuration.
+        ImageLoader.getInstance().init(config);
     }
 }
