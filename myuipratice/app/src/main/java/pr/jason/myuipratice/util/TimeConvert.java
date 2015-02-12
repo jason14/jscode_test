@@ -48,10 +48,17 @@ public class TimeConvert {
             int hour = (int)(now - milliseconds)/60*60*1000;
             compareTime = hour + "시간 전";
         }else{
+            nowCal.set(Calendar.YEAR,nowYear);
+            nowCal.set(Calendar.MONTH,nowMonth);
+            nowCal.set(Calendar.DAY_OF_MONTH,nowDate);
+
             nowCal.set(Calendar.HOUR,0);
             nowCal.set(Calendar.MINUTE,0);
             nowCal.set(Calendar.SECOND,0);
             nowCal.set(Calendar.MILLISECOND,0);
+            callCal.set(Calendar.YEAR,callYear);
+            callCal.set(Calendar.MONTH,callMonth);
+            callCal.set(Calendar.DAY_OF_MONTH,callDate);
             callCal.set(Calendar.HOUR,0);
             callCal.set(Calendar.MINUTE,0);
             callCal.set(Calendar.SECOND,0);
