@@ -14,6 +14,10 @@ public class ContactsClass {
     public String friendName;
     public String friendNum;
     public Uri friendPictureUrl;
+    public int friendStarred;
+    public long date;
+    public long duration;
+    public int type;
     public ContactsClass(){
 
     }

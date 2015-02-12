@@ -2,7 +2,6 @@ package pr.jason.myuipratice;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +34,7 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
     private ViewHolder viewHolder;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
     DisplayImageOptions options;
-    /*public ContactArrayAdapter(Context context, int resource) {
-        super(context, resource);
-    }*/
+
 
     public ContactAdapter(Context context, int resource, ArrayList<ContactsClass> contactsArray, DisplayImageOptions options){
         //super(context,resource);
@@ -78,9 +75,14 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
         }else{
             viewHolder = (ViewHolder)v.getTag();
         }
-        Log.e("getView name", contactsArray.get(position).friendName+" " + contactsArray.get(position).friendPictureUrl.toString());
+        viewHolder.textView.setTextAppearance(mContext,R.style.myListRowText);
         viewHolder.textView.setText(contactsArray.get(position).friendName);
-        ImageLoader.getInstance().displayImage(contactsArray.get(position).friendPictureUrl.toString(), viewHolder.imageView, options, animateFirstListener);
+
+        if(contactsArray.get(position).friendPictureUrl != null && !contactsArray.get(position).friendPictureUrl.equals("")) {
+            ImageLoader.getInstance().displayImage(contactsArray.get(position).friendPictureUrl.toString(), viewHolder.imageView, options, animateFirstListener);
+        }else{
+
+        }
         return v;
     }
 

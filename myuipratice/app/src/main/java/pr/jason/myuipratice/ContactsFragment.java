@@ -1,14 +1,8 @@
 package pr.jason.myuipratice;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,7 +16,6 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.io.InputStream;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +36,7 @@ public class ContactsFragment extends Fragment{
     private ContactsClass contactsClass;
     private ArrayList<ContactsClass> contactsArray;
     DisplayImageOptions options;
+    private MainActivity mainActivity;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -60,13 +54,13 @@ public class ContactsFragment extends Fragment{
         context = getActivity().getApplicationContext();
 
         options = new DisplayImageOptions.Builder()
-                /*.showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)*/
+                .showImageOnLoading(R.drawable.ic_launcher)
+                .showImageForEmptyUri(R.drawable.ic_launcher)
+                .showImageOnFail(R.drawable.ic_launcher)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
-                .displayer(new RoundedBitmapDisplayer(20))
+                .displayer(new RoundedBitmapDisplayer(1000))
                 .build();
     }
 
@@ -74,7 +68,10 @@ public class ContactsFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment,container,false);
         //연락처 목록 받기
-        getPhoneBoolList();
+        contactsArray = new ArrayList<ContactsClass>();
+        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList();
+
+        //getPhoneBoolList();
         //정렬
         setSortArrayList();
         IndexableListView listView = (IndexableListView)view.findViewById(R.id.listview);
@@ -103,7 +100,7 @@ public class ContactsFragment extends Fragment{
 
     }
 
-    public void getPhoneBoolList(){
+   /* public void getPhoneBoolList(){
 
         contactsArray = new ArrayList<ContactsClass>();
         Uri contactsUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
@@ -146,7 +143,7 @@ public class ContactsFragment extends Fragment{
             cursor.close();
         }
     }
-
+*/
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
