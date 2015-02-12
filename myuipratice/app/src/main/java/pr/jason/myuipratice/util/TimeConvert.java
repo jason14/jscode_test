@@ -34,14 +34,14 @@ public class TimeConvert {
         int nowYear, callYear, nowMonth,callMonth,nowDate,callDate,nowMinute,callMinute,nowHour,callHour;
         nowYear = nowCal.get(Calendar.YEAR);
         callYear = callCal.get(Calendar.YEAR);
-        nowMonth = nowCal.get(Calendar.YEAR);
-        callMonth = callCal.get(Calendar.YEAR);
-        nowDate = nowCal.get(Calendar.YEAR);
-        callDate = callCal.get(Calendar.YEAR);
-        nowHour = nowCal.get(Calendar.YEAR);
-        callHour = callCal.get(Calendar.YEAR);
-        nowMinute = nowCal.get(Calendar.YEAR);
-        callMinute = callCal.get(Calendar.YEAR);
+        nowMonth = nowCal.get(Calendar.MONTH);
+        callMonth = callCal.get(Calendar.MONTH);
+        nowDate = nowCal.get(Calendar.DAY_OF_MONTH);
+        callDate = callCal.get(Calendar.DAY_OF_MONTH);
+        nowHour = nowCal.get(Calendar.HOUR_OF_DAY);
+        callHour = callCal.get(Calendar.HOUR_OF_DAY);
+        nowMinute = nowCal.get(Calendar.MINUTE);
+        callMinute = callCal.get(Calendar.MINUTE);
         if(nowYear==callYear
                 &&nowMonth==callMonth
                 &&nowDate==callDate){

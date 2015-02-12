@@ -14,6 +14,7 @@ import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
 
-        getCallsList();
+        Log.e("시작","시작");
     }
 
     @Override
@@ -104,18 +105,17 @@ public class MainActivity extends ActionBarActivity {
 
         while(cursor.moveToNext()){
             String number = cursor.getString(0);
-            String name = cursor.getString(1);
+            String name = null;
+                    name = cursor.getString(1);
 
             int type = Integer.parseInt(cursor.getString(2));
             Long duration = Long.parseLong(cursor.getString(3));
             Long date = Long.parseLong(cursor.getString(4));
 
             String id = fetchContactIdFromPhoneNumber(number);
+            Uri imageUrl = null;
             if (id != null && !id.equals("")) {
-                Uri imageUrl = getPhotoUri(Long.parseLong(id));
-               // Log.w("Calls Data", " name: " + name);
-
-                      // Log.w("Calls Data", "사진 URL Calls List: " + imageUrl.toString() + " ");
+                imageUrl = getPhotoUri(Long.parseLong(id));
             }
             ContactsClass contactsClass = new ContactsClass();
 
@@ -124,7 +124,7 @@ public class MainActivity extends ActionBarActivity {
             contactsClass.type = type;
             contactsClass.duration = duration;
             contactsClass.date = date;
-
+            contactsClass.friendPictureUrl = imageUrl;
             callsArray.add(contactsClass);
         }
         cursor.close();
@@ -167,7 +167,7 @@ public class MainActivity extends ActionBarActivity {
                 contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
         return contactId;
     }
 

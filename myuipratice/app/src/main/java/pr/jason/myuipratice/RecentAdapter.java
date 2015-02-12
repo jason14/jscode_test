@@ -74,7 +74,7 @@ public class RecentAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder)v.getTag();
         }
-        if(callArrays.get(position).friendName.equals("")||callArrays.get(position).friendName == null){
+        if(callArrays.get(position).friendName == null||callArrays.get(position).friendName.equals("")){
             viewHolder.name_tv.setVisibility(View.GONE);
         }else{
             viewHolder.name_tv.setVisibility(View.VISIBLE);
@@ -103,7 +103,11 @@ public class RecentAdapter extends BaseAdapter{
         }
         viewHolder.type_duration_tv.setText(type_duration);
         ImageLoader.getInstance().displayImage(imageUri, viewHolder.type_iv, options, animateFirstListener);
-        ImageLoader.getInstance().displayImage(callArrays.get(position).friendPictureUrl.toString(), viewHolder.picture_iv, options, animateFirstListener);
+        if(callArrays.get(position).friendPictureUrl != null && !callArrays.get(position).friendPictureUrl.equals("")) {
+            ImageLoader.getInstance().displayImage(callArrays.get(position).friendPictureUrl.toString(), viewHolder.picture_iv, options, animateFirstListener);
+        }else{
+
+        }
         viewHolder.date_tv.setText(TimeConvert.parseCompareNowTime(callArrays.get(position).date));
 
         return v;
