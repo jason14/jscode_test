@@ -6,10 +6,8 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -18,15 +16,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -35,12 +40,23 @@ public class MainActivity extends ActionBarActivity {
     private View mToolbar;
     private FragmentManager fm;
     public static Context mContext;
+    public static DisplayImageOptions options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_launcher)
+                .showImageForEmptyUri(R.drawable.ic_launcher)
+                .showImageOnFail(R.drawable.ic_launcher)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new RoundedBitmapDisplayer(1000))
+                .build();
+
        if(savedInstanceState == null){
            FragmentTransaction transaction = getFragmentManager().beginTransaction();
        }
@@ -93,85 +109,9 @@ public class MainActivity extends ActionBarActivity {
         ImageLoader.getInstance().init(config);
     }
 
-    public ArrayList<ContactsClass> getCallsList(){
-        ArrayList<ContactsClass> callsArray = new ArrayList<ContactsClass>();
-        Uri callUri = CallLog.Calls.CONTENT_URI;
-        String callNumber = CallLog.Calls.NUMBER;
-        String callName = CallLog.Calls.CACHED_NAME;
-        String callType = CallLog.Calls.TYPE;
-        String callDuration = CallLog.Calls.DURATION;
-        String callDate = CallLog.Calls.DATE;
-        Cursor cursor = getContentResolver().query(callUri, new String[]{callNumber,callName,callType,callDuration,callDuration},null,null,null);
 
-        while(cursor.moveToNext()){
-            String number = cursor.getString(0);
-            String name = null;
-                    name = cursor.getString(1);
 
-            int type = Integer.parseInt(cursor.getString(2));
-            Long duration = Long.parseLong(cursor.getString(3));
-            Long date = Long.parseLong(cursor.getString(4));
-
-            String id = fetchContactIdFromPhoneNumber(number);
-            Uri imageUrl = null;
-            if (id != null && !id.equals("")) {
-                imageUrl = getPhotoUri(Long.parseLong(id));
-            }
-            ContactsClass contactsClass = new ContactsClass();
-
-            contactsClass.friendName = name;
-            contactsClass.friendNum = number;
-            contactsClass.type = type;
-            contactsClass.duration = duration;
-            contactsClass.date = date;
-            contactsClass.friendPictureUrl = imageUrl;
-            callsArray.add(contactsClass);
-        }
-        cursor.close();
-        return callsArray;
-    }
-
-    public Uri getPhotoUri(long contactId) {
-        ContentResolver contentResolver = getContentResolver();
-
-        try {
-            Cursor cursor =
-                    contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID+ "="+ contactId+ " AND "+ ContactsContract.Data.MIMETYPE+"='"+ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE+ "'", null, null);
-
-            if (cursor != null) {
-                if (!cursor.moveToFirst()) {
-                    return null; // no photo
-                }
-            } else {
-                return null; // error in cursor process
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Uri person = ContentUris.withAppendedId(
-                ContactsContract.Contacts.CONTENT_URI, contactId);
-        return Uri.withAppendedPath(person,ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-    }
-
-    public String fetchContactIdFromPhoneNumber(String phoneNumber) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,Uri.encode(phoneNumber));
-        Cursor cursor = this.getContentResolver().query(uri,new String[] { ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID },null, null, null);
-
-        String contactId = "";
-
-        if (cursor.moveToFirst()) {
-            do {
-                contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return contactId;
-    }
-
-    public ArrayList<ContactsClass> getPhoneBooKList(){
+    public ArrayList<ContactsClass> getPhoneBooKList(boolean isStarredList){
 
         ArrayList<ContactsClass> contactsArray = new ArrayList<ContactsClass>();
         ContactsClass contactsClass = new ContactsClass();
@@ -187,10 +127,11 @@ public class MainActivity extends ActionBarActivity {
             cursor.moveToFirst();
             while(!cursor.isAfterLast()){
                 long id = Long.parseLong(cursor.getString(0));
+
                 String name = cursor.getString(1);
                 String phone = cursor.getString(2);
                 int starred = Integer.parseInt(cursor.getString(3));
-                contactsClass = null;
+
                 contactsClass = new ContactsClass();
 
                 contactsClass.friendId = id;
@@ -203,21 +144,13 @@ public class MainActivity extends ActionBarActivity {
                 Uri imageUrl = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
 
                 contactsClass.friendPictureUrl = imageUrl;
-
-                if(contactsClass.friendStarred == 1){
-
-
-                }
-
-                InputStream io = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver,imageUrl);
-                if(io != null){
-                    Bitmap photo = BitmapFactory.decodeStream(io);
-                    contactsClass.friendPicture = photo;
-
+                if(isStarredList) {
+                    if (contactsClass.friendStarred == 1) {
+                        contactsArray.add(contactsClass);
+                    }
                 }else{
-                    contactsClass.friendPicture = null;
+                    contactsArray.add(contactsClass);
                 }
-                contactsArray.add(contactsClass);
                 i++;
                 cursor.moveToNext();
             }
@@ -225,5 +158,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return contactsArray;
+    }
+
+    public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
     }
 }

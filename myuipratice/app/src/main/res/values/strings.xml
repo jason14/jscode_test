@@ -8,5 +8,6 @@
     <string name="call_not_connected">연결되지 않음</string>
     <string name="call_made">발신 전화</string>
     <string name="call_received">수신 전화</string>
+    <string name="call_rejected">수신 거부</string>
 
 </resources>

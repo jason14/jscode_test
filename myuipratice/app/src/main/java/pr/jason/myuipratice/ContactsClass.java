@@ -18,6 +18,7 @@ public class ContactsClass {
     public long date;
     public long duration;
     public int type;
+    public long cashed_photo_id;
     public ContactsClass(){
 
     }

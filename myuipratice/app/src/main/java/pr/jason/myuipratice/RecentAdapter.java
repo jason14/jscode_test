@@ -1,8 +1,13 @@
 package pr.jason.myuipratice;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.database.Cursor;
+import android.net.Uri;
 import android.provider.CallLog;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +17,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import pr.jason.myuipratice.util.TimeConvert;
 
@@ -33,7 +33,7 @@ public class RecentAdapter extends BaseAdapter{
     private LayoutInflater inflater;
     DisplayImageOptions options;
     private ViewHolder viewHolder;
-    private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
+    private ImageLoadingListener animateFirstListener = new MainActivity.AnimateFirstDisplayListener();
 
     public RecentAdapter(Context context,ArrayList<ContactsClass> callArrays, DisplayImageOptions options){
         this.mContext = context;
@@ -79,6 +79,9 @@ public class RecentAdapter extends BaseAdapter{
         }else{
             viewHolder.name_tv.setVisibility(View.VISIBLE);
             viewHolder.name_tv.setText(callArrays.get(position).friendName);
+            viewHolder.name_tv.setTextAppearance(mContext,R.style.myListRowText);
+        //    Log.e("friendName"," friendName : " + callArrays.get(position).friendName+ " ");
+
         }
 
         viewHolder.number_tv.setText(callArrays.get(position).friendNum);
@@ -90,25 +93,47 @@ public class RecentAdapter extends BaseAdapter{
              type_duration = mContext.getString(R.string.call_missed);
         }else if(callArrays.get(position).type == CallLog.Calls.INCOMING_TYPE){
              imageUri = "drawable://"+R.drawable.ic_call_received_grey600_48dp;
-             type_duration = mContext.getString(R.string.call_received) + " " + TimeConvert.parseTime(callArrays.get(position).duration);
+             type_duration = mContext.getString(R.string.call_received) + " " + TimeConvert.parseTime(callArrays.get(position).duration*1000);
 
         }else if(callArrays.get(position).type == CallLog.Calls.OUTGOING_TYPE){
              imageUri = "drawable://"+R.drawable.ic_call_made_grey600_48dp;
             if(callArrays.get(position).duration <= 0){
                 type_duration = mContext.getString(R.string.call_not_connected);
             }else{
-                type_duration = mContext.getString(R.string.call_made) + " " + TimeConvert.parseTime(callArrays.get(position).duration);
+                type_duration = mContext.getString(R.string.call_made) + " " + TimeConvert.parseTime(callArrays.get(position).duration *1000);
             }
 
-        }
-        viewHolder.type_duration_tv.setText(type_duration);
-        ImageLoader.getInstance().displayImage(imageUri, viewHolder.type_iv, options, animateFirstListener);
-        if(callArrays.get(position).friendPictureUrl != null && !callArrays.get(position).friendPictureUrl.equals("")) {
-            ImageLoader.getInstance().displayImage(callArrays.get(position).friendPictureUrl.toString(), viewHolder.picture_iv, options, animateFirstListener);
         }else{
-
+            imageUri = null;
+            type_duration = mContext.getString(R.string.call_rejected);
         }
-        viewHolder.date_tv.setText(TimeConvert.parseCompareNowTime(callArrays.get(position).date));
+
+        viewHolder.type_duration_tv.setText(type_duration);
+
+
+
+        ImageLoader.getInstance().displayImage(imageUri, viewHolder.type_iv, options, animateFirstListener);
+
+        String peoplePhotoUri = "";
+        String number = callArrays.get(position).friendNum;
+        if(callArrays.get(position).cashed_photo_id != 0) {
+            String id = fetchContactIdFromPhoneNumber(number);
+            Log.e("id", "아이디 " + id);
+            if (id != null && !id.equals("")) {
+                peoplePhotoUri = getPhotoUri(Long.parseLong(id)).toString();
+            }
+        }
+        if(peoplePhotoUri != null && !peoplePhotoUri.equals("")) {
+
+
+        }else{
+            peoplePhotoUri = "drawable://"+R.drawable.ic_launcher;
+        }
+
+        ImageLoader.getInstance().displayImage(peoplePhotoUri, viewHolder.picture_iv, options, animateFirstListener);
+
+
+        viewHolder.date_tv.setText(TimeConvert.formatTimeString(callArrays.get(position).date));
 
         return v;
     }
@@ -123,21 +148,46 @@ public class RecentAdapter extends BaseAdapter{
 
     }
 
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+    public Uri getPhotoUri(long contactId) {
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Cursor cursor = null;
+        try {
+            cursor =
+                    contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID+ "="+ contactId+ " AND "+ ContactsContract.Data.MIMETYPE+"='"+ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE+ "'", null, null);
 
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            if (loadedImage != null) {
-                ImageView imageView = (ImageView) view;
-                boolean firstDisplay = !displayedImages.contains(imageUri);
-                if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
-                    displayedImages.add(imageUri);
+            if (cursor != null) {
+                if (!cursor.moveToFirst()) {
+                    return null; // no photo
                 }
+            } else {
+                return null; // error in cursor process
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+        cursor.close();
+
+        Uri person = ContentUris.withAppendedId(
+                ContactsContract.Contacts.CONTENT_URI, contactId);
+        return person;
+    }
+
+    public String fetchContactIdFromPhoneNumber(String phoneNumber) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,Uri.encode(phoneNumber));
+        Cursor cursor = mContext.getContentResolver().query(uri,new String[] { ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID },null, null, null);
+
+        String contactId = "";
+
+        if (cursor.moveToFirst()) {
+            do {
+                contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return contactId;
     }
 
 

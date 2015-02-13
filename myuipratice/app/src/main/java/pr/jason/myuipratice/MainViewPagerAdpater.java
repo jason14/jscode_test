@@ -22,13 +22,13 @@ public class MainViewPagerAdpater extends FragmentPagerAdapter{
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                return FavoriteFragment.newInstance(0,"즐겨찾기");
+                return StarredFragment.newInstance(0, "즐겨찾기");
 
             case 1:
-                return ContactsFragment.newInstance(1,"연락처");
+                return RecentFragment.newInstance(2,"최근");
 
             case 2:
-                return RecentFragment.newInstance(2,"최근");
+                return ContactsFragment.newInstance(1,"연락처");
 
             default:
                 return null;
@@ -44,10 +44,10 @@ public class MainViewPagerAdpater extends FragmentPagerAdapter{
                 return "즐겨찾기";
 
             case 1:
-                return "연락처";
+                return "최근";
 
             case 2:
-                return "최근";
+                return "연락처";
 
             default:
                 return null;

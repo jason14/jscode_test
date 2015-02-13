@@ -1,15 +1,19 @@
 package pr.jason.myuipratice;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.ArrayList;
 
@@ -20,7 +24,6 @@ public class RecentFragment extends Fragment {
     private String title;
     private int page;
     private ArrayList<ContactsClass> callsArray;
-    DisplayImageOptions options;
 
     public static RecentFragment newInstance(int page,String title){
         RecentFragment recentFragment = new RecentFragment();
@@ -37,27 +40,117 @@ public class RecentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         page= getArguments().getInt("somePage",0);
         title = getArguments().getString("someTitle");
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_launcher)
-                .showImageForEmptyUri(R.drawable.ic_launcher)
-                .showImageOnFail(R.drawable.ic_launcher)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .displayer(new RoundedBitmapDisplayer(1000))
-                .build();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recent_fragment,container,false);
         callsArray = new ArrayList<ContactsClass>();
-        callsArray = ((MainActivity)MainActivity.mContext).getCallsList();
-        RecentAdapter recentAdapter = new RecentAdapter(getActivity().getApplicationContext(),callsArray,options);
+        callsArray = getCallsList();
+       // callsArray = addPhotoUri(callsArray);
+        RecentAdapter recentAdapter = new RecentAdapter(getActivity().getApplicationContext(),callsArray,MainActivity.options);
         ListView listView =(ListView)view.findViewById(R.id.listview);
         listView.setAdapter(recentAdapter);
 
         return view;
     }
+
+    public ArrayList<ContactsClass> getCallsList(){
+        ArrayList<ContactsClass> callsArray = new ArrayList<ContactsClass>();
+        Uri callUri = CallLog.Calls.CONTENT_URI;
+        String callNumber = CallLog.Calls.NUMBER;
+        String callName = CallLog.Calls.CACHED_NAME;
+        String callType = CallLog.Calls.TYPE;
+        String callDuration = CallLog.Calls.DURATION;
+        String callDate = CallLog.Calls.DATE;
+        String cashedPhoto = CallLog.Calls.CACHED_PHOTO_ID;
+        Cursor cursor = getActivity().getContentResolver().query(callUri, new String[]{callNumber,callName,callType,callDuration,callDate,cashedPhoto},null,null,null);
+
+        while(cursor.moveToNext()){
+            String number = cursor.getString(0);
+            String name = null;
+            name = cursor.getString(1);
+
+            int type = Integer.parseInt(cursor.getString(2));
+            Long duration = Long.parseLong(cursor.getString(3));
+            Long date = Long.parseLong(cursor.getString(4));
+            Long photo = Long.parseLong(cursor.getString(5));
+
+            ContactsClass contactsClass = new ContactsClass();
+
+            contactsClass.friendName = name;
+            contactsClass.friendNum = number;
+            contactsClass.type = type;
+            contactsClass.duration = duration;
+            contactsClass.date = date;
+            contactsClass.cashed_photo_id = photo;
+            callsArray.add(contactsClass);
+        }
+        cursor.close();
+        return callsArray;
+    }
+
+    public ArrayList<ContactsClass> addPhotoUri(ArrayList<ContactsClass> callsArray){
+
+        for(int i = 0; i < callsArray.size(); i++){
+            Uri imageUrl = null;
+            if(callsArray.get(i).cashed_photo_id!=0){
+                Log.e( " Count ", "이미지 있는 count:  "+ i);
+                String number = callsArray.get(i).friendNum;
+                String id = fetchContactIdFromPhoneNumber(number);
+
+                if (id != null && !id.equals("")) {
+                    imageUrl = getPhotoUri(Long.parseLong(id));
+                }
+
+            }
+            callsArray.get(i).friendPictureUrl = imageUrl;
+        }
+        return callsArray;
+    }
+
+    public Uri getPhotoUri(long contactId) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        Cursor cursor = null;
+        try {
+             cursor =
+                    contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID+ "="+ contactId+ " AND "+ ContactsContract.Data.MIMETYPE+"='"+ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE+ "'", null, null);
+
+            if (cursor != null) {
+                if (!cursor.moveToFirst()) {
+                    return null; // no photo
+                }
+            } else {
+                return null; // error in cursor process
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        cursor.close();
+
+        Uri person = ContentUris.withAppendedId(
+                ContactsContract.Contacts.CONTENT_URI, contactId);
+        return person;
+    }
+
+    public String fetchContactIdFromPhoneNumber(String phoneNumber) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,Uri.encode(phoneNumber));
+        Cursor cursor = getActivity().getContentResolver().query(uri,new String[] { ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID },null, null, null);
+
+        String contactId = "";
+
+        if (cursor.moveToFirst()) {
+            do {
+                contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return contactId;
+    }
+
+
 
 }

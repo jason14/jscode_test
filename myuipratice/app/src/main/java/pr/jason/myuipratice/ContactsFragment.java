@@ -11,9 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.text.Collator;
@@ -35,7 +33,6 @@ public class ContactsFragment extends Fragment{
     private Context context;
     private ContactsClass contactsClass;
     private ArrayList<ContactsClass> contactsArray;
-    DisplayImageOptions options;
     private MainActivity mainActivity;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
@@ -53,15 +50,7 @@ public class ContactsFragment extends Fragment{
         title = getArguments().getString("someTitle");
         context = getActivity().getApplicationContext();
 
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_launcher)
-                .showImageForEmptyUri(R.drawable.ic_launcher)
-                .showImageOnFail(R.drawable.ic_launcher)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .displayer(new RoundedBitmapDisplayer(1000))
-                .build();
+
     }
 
     @Override
@@ -69,13 +58,13 @@ public class ContactsFragment extends Fragment{
         View view = inflater.inflate(R.layout.contacts_fragment,container,false);
         //연락처 목록 받기
         contactsArray = new ArrayList<ContactsClass>();
-        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList();
+        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList(false);
 
         //getPhoneBoolList();
         //정렬
         setSortArrayList();
         IndexableListView listView = (IndexableListView)view.findViewById(R.id.listview);
-        ContactAdapter contactAdapter = new ContactAdapter(context,R.layout.contacts_row,contactsArray,options);
+        ContactAdapter contactAdapter = new ContactAdapter(context,R.layout.contacts_row,contactsArray, MainActivity.options);
         listView.setAdapter(contactAdapter);
         listView.setFastScrollEnabled(true);
         Log.e("연락처 배열 개수", "" + contactsArray.size());
