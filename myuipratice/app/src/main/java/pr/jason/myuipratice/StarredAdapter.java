@@ -21,9 +21,9 @@ public class StarredAdapter extends RecyclerView.Adapter<StarredViewHolder>{
     DisplayImageOptions options;
     private ImageLoadingListener animateFirstListener = new MainActivity.AnimateFirstDisplayListener();
 
-    public StarredAdapter(ArrayList<ContactsClass> contactsArray){
+    public StarredAdapter(ArrayList<ContactsClass> contactsArray,DisplayImageOptions options){
         this.contactsArray = contactsArray;
-        options = MainActivity.options;
+        this.options = options;
     }
 
     @Override

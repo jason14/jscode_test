@@ -16,9 +16,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.melnykov.fab.FloatingActionButton;
+import com.nineoldandroids.animation.AnimatorSet;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -33,6 +36,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import pr.jason.myuipratice.util.DisplayConfig;
+
 
 public class MainActivity extends ActionBarActivity {
     private PagerSlidingTabStrip mSlidingTabLayout;
@@ -41,7 +46,14 @@ public class MainActivity extends ActionBarActivity {
     private FragmentManager fm;
     public static Context mContext;
     public static DisplayImageOptions options;
-
+    public static float fabTransWidth;
+    FloatingActionButton fab;
+    Animation ani;
+    public static int prePage = 0;
+    public static boolean onDial = false;
+    android.support.v4.app.FragmentTransaction transaction;
+    public static float mDisWidth;
+    public static float mDisHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +73,69 @@ public class MainActivity extends ActionBarActivity {
            FragmentTransaction transaction = getFragmentManager().beginTransaction();
        }
         initImageLoader(this);
+        //Display dis = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        DisplayConfig displayConfig = new DisplayConfig(mContext,MainActivity.this);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        mDisWidth = displayConfig.getDisplayWidth();
+        mDisHeight = displayConfig.getDisplayHeight();
+        float fabMarginRight = getResources().getDimension(R.dimen.item_margin);
+        //float fabHalfWidth = fab.getWidth()/2;
+        fabTransWidth = mDisWidth/2 - (fabMarginRight + displayConfig.convertDpToPixel(24,mContext));
+
         fm = this.getSupportFragmentManager();
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setDividerColor(getResources().getColor(R.color.colorTransparent));
+        mSlidingTabLayout.setIndicatorColor(getResources().getColor(R.color.colorControlHighlight));
+        mSlidingTabLayout.setTextColorResource(R.color.colorLightText);
+        mSlidingTabLayout.setUnderlineHeight(0);
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(prePage==0&&position!=0) {
+
+                    AnimatorSet set = new AnimatorSet();
+                    set.playTogether( com.nineoldandroids.animation.ObjectAnimator.ofFloat(fab, "translationX", 0, fabTransWidth));
+                    set.setDuration(300).start();
+                    // Log.e("Trans Width value", "최근 또는 연락처 trans value: " + fabTransWidth);
+                }else if(prePage!=0&&position==0){
+
+                    AnimatorSet set = new AnimatorSet();
+                    set.playTogether( com.nineoldandroids.animation.ObjectAnimator.ofFloat(fab, "translationX", fabTransWidth, 0));
+                    set.setDuration(300).start();
+                }
+                prePage = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mSlidingTabLayout.setViewPager(mViewPager);
 
-        Log.e("시작","시작");
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Dial Fragment","Dial 프래그먼트 시작");
+                DialFragment dialFragment = DialFragment.newInstance("Dial");
+                transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
+                transaction.replace(R.id.dial_fragment_layout,dialFragment,"dialFragment");
+                transaction.addToBackStack(null).commit();
+                onDial = true;
+            }
+        });
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,7 +223,6 @@ public class MainActivity extends ActionBarActivity {
             }
             cursor.close();
         }
-
         return contactsArray;
     }
 

@@ -7,4 +7,7 @@
     <color name="colorControlHighlight">#00CC55</color>
     <color name="colorControlNormal">#FF0000</color>
     <color name="colorDarkText">#333333</color>
+    <color name="colorTransparent">#00FFFFFF</color>
+    <color name="colorLightText">#FFFFFF</color>
+
 </resources>

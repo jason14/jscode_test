@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+
 import java.util.ArrayList;
 
 /**
@@ -18,6 +21,7 @@ public class StarredFragment extends Fragment{
 
     private String title;
     private int page;
+    public  DisplayImageOptions options;
 
     public static StarredFragment newInstance(int page,String title){
         StarredFragment starredFragment = new StarredFragment();
@@ -33,6 +37,15 @@ public class StarredFragment extends Fragment{
         super.onCreate(savedInstanceState);
         page= getArguments().getInt("somePage",0);
         title = getArguments().getString("someTitle");
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_launcher)
+                .showImageForEmptyUri(R.drawable.ic_launcher)
+                .showImageOnFail(R.drawable.ic_launcher)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new RoundedBitmapDisplayer(1000))
+                .build();
     }
 
     @Override
@@ -42,8 +55,9 @@ public class StarredFragment extends Fragment{
         contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList(true);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        recyclerView.setAdapter(new StarredAdapter(contactsArray));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(new StarredAdapter(contactsArray,options));
         return view;
     }
 

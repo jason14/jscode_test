@@ -145,7 +145,6 @@ public class RecentAdapter extends BaseAdapter{
         TextView date_tv;
         TextView type_duration_tv;
         ImageView type_iv;
-
     }
 
 
