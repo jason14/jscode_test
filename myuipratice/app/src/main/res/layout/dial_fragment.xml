@@ -12,13 +12,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/content_layout"
             android:orientation="vertical">
-            <TextView
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Content"
-                android:textColor="@color/colorDarkText"
-                android:textSize="20sp"/>
+                android:cursorVisible="false"
+                android:background="#00ffffff"
+                android:id="@+id/contact_search_et"/>
+
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"

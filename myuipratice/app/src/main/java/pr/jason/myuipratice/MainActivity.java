@@ -128,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
                 transaction = getSupportFragmentManager().beginTransaction();
 
                 transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
-                transaction.replace(R.id.dial_fragment_layout,dialFragment,"dialFragment");
+                transaction.replace(android.R.id.content,dialFragment,"dialFragment");
                 transaction.addToBackStack(null).commit();
                 onDial = true;
             }

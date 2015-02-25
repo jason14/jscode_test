@@ -32,10 +32,7 @@
                 android:background="@android:color/white"/>
 
         </LinearLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dial_fragment_layout"></FrameLayout>
+
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
