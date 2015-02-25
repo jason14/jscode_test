@@ -20,6 +20,8 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -39,7 +41,7 @@ import java.util.List;
 import pr.jason.myuipratice.util.DisplayConfig;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ObservableScrollViewCallbacks {
     private PagerSlidingTabStrip mSlidingTabLayout;
     private ViewPager mViewPager;
     private View mToolbar;
@@ -224,6 +226,21 @@ public class MainActivity extends ActionBarActivity {
             cursor.close();
         }
         return contactsArray;
+    }
+
+    @Override
+    public void onScrollChanged(int i, boolean b, boolean b2) {
+        
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+
     }
 
     public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
