@@ -11,8 +11,13 @@
         >
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#aa1144"></LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/main_layout">
 
             <com.astuetz.PagerSlidingTabStrip
                 android:id="@+id/sliding_tabs"

@@ -11,11 +11,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+
+import pr.jason.myuipratice.util.MyLog;
 
 /**
  * Created by Jaesin on 2015-02-05.
@@ -24,7 +28,8 @@ public class RecentFragment extends Fragment {
     private String title;
     private int page;
     private ArrayList<ContactsClass> callsArray;
-
+    private boolean isListViewScrollTop = true;
+    ListView listView;
     public static RecentFragment newInstance(int page,String title){
         RecentFragment recentFragment = new RecentFragment();
         Bundle args = new Bundle();
@@ -46,14 +51,102 @@ public class RecentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recent_fragment,container,false);
+        MainActivity.isOnfocusScrollView = false;
         callsArray = new ArrayList<ContactsClass>();
         callsArray = getCallsList();
        // callsArray = addPhotoUri(callsArray);
         RecentAdapter recentAdapter = new RecentAdapter(getActivity().getApplicationContext(),callsArray,MainActivity.options);
-        ListView listView =(ListView)view.findViewById(R.id.listview);
+        listView =(ListView)view.findViewById(R.id.listview);
         listView.setAdapter(recentAdapter);
 
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(scrollState!=0){
+                    MainActivity.isOnfocusScrollView = false;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                int scrolly = getScrollY();
+                MyLog.LogMessage("스크롤 위치값",scrolly+"");
+                //MyLog.LogMessage("스크롤 scrollState",scrollState+"");
+                if(scrolly==0){
+                    isListViewScrollTop = true;
+                }else{
+                    isListViewScrollTop = false;
+                }
+                MyLog.LogMessage("isListViewScrollTop",isListViewScrollTop+"");
+            }
+        });
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(MainActivity.isOnfocusScrollView){
+                   // MainActivity.main_layout.requestDisallowInterceptTouchEvent(false);
+                    MyLog.LogMessage("ListView 터치",MainActivity.isOnfocusScrollView+"");
+                }else{
+                    MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
+                    if(isListViewScrollTop){
+                        MyLog.LogMessage("isDragDown(event)",isDragDown(event)+"");
+                        if(isDragDown(event)){
+                            MainActivity.isOnfocusScrollView = true;
+                            MyLog.LogMessage("ListView 터치 isOnfocusScrollView",""+MainActivity.isOnfocusScrollView );
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
         return view;
+    }
+
+    private boolean isDragDown(MotionEvent event){
+        boolean result = false;
+        float downX=0;
+        float downY=0;
+        if(event.getAction()==MotionEvent.ACTION_DOWN){
+            downX  = event.getX();
+            downY = event.getY();
+        }else if(event.getAction()==MotionEvent.ACTION_MOVE){
+            int x = (int)(event.getX()-downX);
+            int y = (int)(event.getY()-downY);
+            if(y>0) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void onResume() {
+        Log.e("onResume ",""+"resume");
+
+            int scrolly = getScrollY();
+            Log.e("onResume scroll 위치",""+scrolly);
+            if(scrolly==0){
+                isListViewScrollTop = true;
+            }else {
+                isListViewScrollTop = false;
+            }
+        super.onResume();
+    }
+
+    private int getScrollY(){
+        int scrolly = 0;
+        View c = listView.getChildAt(0);
+        try {
+            scrolly = -c.getTop() + listView.getFirstVisiblePosition() * c.getHeight();
+           return scrolly;
+        }catch(NullPointerException e){
+            Log.e("listView.getFirstVisiblePosition()", ""+ e);
+            return 0;
+        }
     }
 
     public ArrayList<ContactsClass> getCallsList(){

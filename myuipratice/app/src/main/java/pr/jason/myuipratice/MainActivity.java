@@ -15,15 +15,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.view.ViewHelper;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -39,9 +40,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import pr.jason.myuipratice.util.DisplayConfig;
+import pr.jason.myuipratice.util.MyLog;
 
 
-public class MainActivity extends ActionBarActivity implements ObservableScrollViewCallbacks {
+public class MainActivity extends ActionBarActivity {
     private PagerSlidingTabStrip mSlidingTabLayout;
     private ViewPager mViewPager;
     private View mToolbar;
@@ -56,6 +58,11 @@ public class MainActivity extends ActionBarActivity implements ObservableScrollV
     android.support.v4.app.FragmentTransaction transaction;
     public static float mDisWidth;
     public static float mDisHeight;
+    public static boolean isOnfocusScrollView = false;
+    public static LinearLayout main_layout;
+    private float  maxScrollY = 0;
+    private float minScrollY = 20f;
+    private float minSlideDownStartY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +90,11 @@ public class MainActivity extends ActionBarActivity implements ObservableScrollV
         float fabMarginRight = getResources().getDimension(R.dimen.item_margin);
         //float fabHalfWidth = fab.getWidth()/2;
         fabTransWidth = mDisWidth/2 - (fabMarginRight + displayConfig.convertDpToPixel(24,mContext));
+        maxScrollY = mDisHeight/2;
+        minSlideDownStartY = mDisHeight/8;
 
         fm = this.getSupportFragmentManager();
+        main_layout = (LinearLayout)findViewById(R.id.main_layout);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
@@ -135,8 +145,104 @@ public class MainActivity extends ActionBarActivity implements ObservableScrollV
                 onDial = true;
             }
         });
+
+        //main_layout.setOnTouchListener(mainLayoutTouchListener);
+
+
+    }
+    private float startY;
+    private float downY;
+    private float onMoveY;
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+
+                downY = event.getY();
+                startY = main_layout.getY();
+                Log.e("dispatchTouchEvent 터치 시작점", ", y: " + downY);
+                MyLog.LogMessage("dispatchTouchEvent ACTION_DOWN ", " Top: " + main_layout.getY());
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+                onMoveY = event.getY();
+                int deltaY = (int)(onMoveY-downY);
+                int newY = (int)(deltaY+startY);
+                Log.e("dispatchTouchEvent 터치 무브", ", y: " + newY);
+                Log.e("dispatchTouchEvent","isOnfocusScrollView: " + isOnfocusScrollView);
+
+                    if (Math.abs(newY) < maxScrollY) {
+                        MyLog.LogMessage("dispatchTouchEvent main_layout.getTop()", " Top: " + main_layout.getY());
+
+                        if(main_layout.getY() >= 0) {
+                            if (isOnfocusScrollView == true) {
+
+                                if((startY<=0)&&(deltaY<minScrollY)){
+                                    ViewHelper.setTranslationY(main_layout, 0);
+                                }else {
+                                    ViewHelper.setTranslationY(main_layout, newY);
+                                }
+
+
+                                MyLog.LogMessage("dispatchTouchEvent 터치이벤트", "" + newY);
+                            }
+                        }else{
+
+                        }
+
+                    }
+                break;
+            case MotionEvent.ACTION_UP:
+
+                    float endY = event.getY();
+                        MyLog.LogMessage("UP"," startY: " + startY +" ,endY: "+endY );
+                    if ((downY > endY) && ((downY - endY) > minScrollY)) {
+                        MyLog.LogMessage("UP","isOnfocusScrollView: " +isOnfocusScrollView);
+
+                        if(isOnfocusScrollView) {
+                            slideUpMainLayout(main_layout.getY());
+                            //ViewHelper.setTranslationY(main_layout, 0);
+                            isOnfocusScrollView = false;
+                        }
+                    }else if((downY < endY) && ((endY-downY) > minSlideDownStartY)){
+                        if(isOnfocusScrollView) {
+                            slideDownMainLayout(main_layout.getY());
+                        }
+                    }else if((downY > endY) && ((downY - endY) < minScrollY)){
+                        if(isOnfocusScrollView) {
+                            slideDownMainLayout(main_layout.getY());
+                        }
+                    }else if((downY < endY) && ((endY-downY) < minSlideDownStartY)){
+                        if(isOnfocusScrollView) {
+                            slideUpMainLayout(main_layout.getY());
+                            //ViewHelper.setTranslationY(main_layout, 0);
+                            isOnfocusScrollView = false;
+                        }
+                    }
+
+                    if (main_layout.getY() < 0) {
+                        ViewHelper.setTranslationY(main_layout, 0);
+                        isOnfocusScrollView = false;
+                    }
+
+                Log.e("터치 옵", ", y: " + event.getY());
+                break;
+        }
+        return super.dispatchTouchEvent(event);
     }
 
+    private void slideDownMainLayout(float curY){
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(main_layout, "translationY", curY, maxScrollY));
+        set.setDuration(300).start();
+    }
+
+    private void slideUpMainLayout(float curY){
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(main_layout, "translationY", curY, 0));
+        set.setDuration(300).start();
+    }
 
 
     @Override
@@ -228,20 +334,7 @@ public class MainActivity extends ActionBarActivity implements ObservableScrollV
         return contactsArray;
     }
 
-    @Override
-    public void onScrollChanged(int i, boolean b, boolean b2) {
-        
-    }
 
-    @Override
-    public void onDownMotionEvent() {
-
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-
-    }
 
     public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
