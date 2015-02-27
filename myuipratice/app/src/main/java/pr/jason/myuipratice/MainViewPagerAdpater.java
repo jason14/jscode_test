@@ -22,20 +22,21 @@ public class MainViewPagerAdpater extends FragmentPagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
-        switch(position){
-            case 0:
+
+            switch (position) {
+                case 0:
                 /*ViewHelper.setTranslationX(fab,MainActivity.fabTransWidth);*/
-                return StarredFragment.newInstance(0, "즐겨찾기");
+                    return StarredFragment.newInstance(0, "즐겨찾기");
 
-            case 1:
-                return RecentFragment.newInstance(2,"최근");
+                case 1:
+                    return RecentFragment.newInstance(2, "최근");
 
-            case 2:
-                return ContactsFragment.newInstance(1,"연락처");
+                case 2:
+                    return ContactsFragment.newInstance(1, "연락처");
 
-            default:
-                return null;
-        }
+                default:
+                    return null;
+            }
 
 
     }

@@ -62,23 +62,19 @@ public class RecentFragment extends Fragment {
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(scrollState!=0){
-                    MainActivity.isOnfocusScrollView = false;
+                int scrolly = getScrollY();
+
+                if(scrolly==0&&scrollState == 0){
+                    isListViewScrollTop = true;
+                }else{
+                    isListViewScrollTop = false;
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                int scrolly = getScrollY();
-                MyLog.LogMessage("스크롤 위치값",scrolly+"");
-                //MyLog.LogMessage("스크롤 scrollState",scrollState+"");
-                if(scrolly==0){
-                    isListViewScrollTop = true;
-                }else{
-                    isListViewScrollTop = false;
-                }
-                MyLog.LogMessage("isListViewScrollTop",isListViewScrollTop+"");
+
             }
         });
 
@@ -88,15 +84,20 @@ public class RecentFragment extends Fragment {
 
                 if(MainActivity.isOnfocusScrollView){
                    // MainActivity.main_layout.requestDisallowInterceptTouchEvent(false);
-                    MyLog.LogMessage("ListView 터치",MainActivity.isOnfocusScrollView+"");
+                    MyLog.LogMessage("MOVE 터치",MainActivity.isOnfocusScrollView+" RecentFragment isOnfocusScrollView");
+                    event.setAction(MotionEvent.ACTION_CANCEL);
                 }else{
-                    MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
+                    MyLog.LogMessage("MOVE isListViewScrollTop",isListViewScrollTop+" isListViewScrollTop");
+
                     if(isListViewScrollTop){
-                        MyLog.LogMessage("isDragDown(event)",isDragDown(event)+"");
                         if(isDragDown(event)){
-                            MainActivity.isOnfocusScrollView = true;
-                            MyLog.LogMessage("ListView 터치 isOnfocusScrollView",""+MainActivity.isOnfocusScrollView );
+                            MyLog.LogMessage("UP 터치",MainActivity.isOnfocusScrollView+"");
+
+                            MainActivity.isOnReadyScrollView = true;
+                            MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
                         }
+                    }else{
+                        MainActivity.isOnReadyScrollView = false;
                     }
                 }
                 return false;

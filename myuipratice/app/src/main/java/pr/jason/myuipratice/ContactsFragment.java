@@ -89,50 +89,7 @@ public class ContactsFragment extends Fragment{
 
     }
 
-   /* public void getPhoneBoolList(){
 
-        contactsArray = new ArrayList<ContactsClass>();
-        Uri contactsUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        String disId = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
-        String disName = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
-        String number = ContactsContract.CommonDataKinds.Phone.NUMBER;
-
-        Cursor cursor = context.getContentResolver().query(contactsUri, new String[]{disId,disName,number},null,null,null);
-
-        int i = 0;
-        if(cursor != null){
-            cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
-                long id = Long.parseLong(cursor.getString(0));
-                String name = cursor.getString(1);
-                String phone = cursor.getString(2);
-
-                contactsClass = null;
-                contactsClass = new ContactsClass();
-
-                contactsClass.friendId = id;
-                contactsClass.friendName = name;
-                contactsClass.friendNum = phone;
-
-                ContentResolver contentResolver = context.getContentResolver();
-                Uri imageUrl = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,id);
-                contactsClass.friendPictureUrl = imageUrl;
-                InputStream io = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver,imageUrl);
-                if(io != null){
-                    Bitmap photo = BitmapFactory.decodeStream(io);
-                    contactsClass.friendPicture = photo;
-
-                }else{
-                    contactsClass.friendPicture = null;
-                }
-                contactsArray.add(contactsClass);
-                i++;
-                cursor.moveToNext();
-            }
-            cursor.close();
-        }
-    }
-*/
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
