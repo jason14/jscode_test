@@ -156,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
                 DialFragment dialFragment = DialFragment.newInstance("Dial");
                 transaction = getSupportFragmentManager().beginTransaction();
 
-                transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
+                transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom,R.anim.slide_in_top,R.anim.slide_out_bottom);
                 transaction.replace(android.R.id.content,dialFragment,"dialFragment");
                 transaction.addToBackStack(null).commit();
                 onDial = true;
@@ -207,8 +207,6 @@ public class MainActivity extends ActionBarActivity {
                 downY = event.getY();
                 downX = event.getX();
                 startY = main_layout.getY();
-                Log.e("dispatchTouchEvent 터치 시작점", ", y: " + downY);
-                MyLog.LogMessage("dispatchTouchEvent ACTION_DOWN ", " Top: " + main_layout.getY());
 
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -220,36 +218,25 @@ public class MainActivity extends ActionBarActivity {
                 deltaX = (int)(onMoveX-downX);
 
                 int newY = (int)(deltaY+startY);
-                //Log.e("dispatchTouchEvent 터치 무브", ", y: " + newY);
-                //Log.e("dispatchTouchEvent","isOnfocusScrollView: " + isOnfocusScrollView);
 
                 if (Math.abs(newY) < maxScrollY) {
                     if(Math.abs(velocity) > mMinimumVelocity){
                         break;
                     }
 
-
-                    Log.e("MOVE",isOnReadyScrollView + " isOnReadyScrollView");
-                    Log.e("MOVE",isOnfocusScrollView + " isOnfocusScrollView");
-                    //Log.e("MOVE",isOnReadyScrollView + " isOnReadyScrollView");
-
                     if((main_layout.getY() >= 0) && (isOnPageViewScroll ==false)) {
                         if (isOnReadyScrollView == true) {
                             if(Math.abs(deltaY)>(3*Math.abs(deltaX))) {
                                 if ((startY <= 0) && (deltaY < minScrollY)) {
-                                    //mViewPager.setPagingEnabled();
-                                    //ViewHelper.setTranslationY(main_layout, 0);
+
                                 } else {
                                     if(startY<downY) {
                                         mViewPager.setPagingDisabled();
                                         ViewHelper.setTranslationY(main_layout, newY);
-                                        MyLog.LogMessage("MOVE", " setTranslationY: " + main_layout.getY());
                                         isOnfocusScrollView = true;
                                     }
                                 }
-
                             }
-                            // MyLog.LogMessage("dispatchTouchEvent 터치이벤트", "" + newY);
                         }
                     }else{
 
@@ -270,65 +257,37 @@ public class MainActivity extends ActionBarActivity {
                 duration = Math.min(duration, MAX_UP_DOWN_DURATION);
                 float upY = event.getY();
                 deltaY = Math.abs(deltaY);
-                MyLog.LogMessage("UP"," deltaY: " + deltaY  );
-                MyLog.LogMessage("UP"," duration: " + duration  );
-                MyLog.LogMessage("UP"," main_layoutDelta: " + main_layoutDelta  );
-                MyLog.LogMessage("UP"," mBaseLineFlingVelocity: " + mBaseLineFlingVelocity  );
-                MyLog.LogMessage("UP"," mFlingVelocityInfluence: " + mFlingVelocityInfluence  );
-                MyLog.LogMessage("UP"," MAX_UP_DOWN_DURATION: " + MAX_UP_DOWN_DURATION  );
 
 
-                if(velocity < 20) {
-                    if ((downY > upY) && (deltaY > minScrollY)) {
-                        MyLog.LogMessage("UP", "isOnfocusScrollView: " + isOnfocusScrollView);
+                    if (isOnfocusScrollView && (downY > upY) && (deltaY > minScrollY)) {
 
-                        if (isOnfocusScrollView) {
-                            slideUpMainLayout(startY,main_layout.getY(),duration);
+                        slideUpMainLayout(startY,main_layout.getY(),duration);
 
-                        }
-                    } else if ((downY < upY) && (deltaY > minSlideDownStartY)) {
-                        if (isOnfocusScrollView) {
-                            slideDownMainLayout(main_layout.getY(),duration);
-                        }
-                    } else if ((downY > upY) && (deltaY < minScrollY)) {
-                        if (isOnfocusScrollView) {
-                            slideDownMainLayout(main_layout.getY(),duration);
-                        }
-                    } else if ((downY < upY) && (deltaY < minSlideDownStartY)) {
+                    } else if (isOnfocusScrollView &&(downY < upY) && (deltaY > minSlideDownStartY)) {
 
-                        if (isOnfocusScrollView) {
-                            MyLog.LogMessage("UP", "조금 이동하였다: " + isOnfocusScrollView);
-                            if(startY==0) {
-                                slideUpMainLayout(startY, main_layout.getY(), duration);
-                            }
-                        }
-                    }
-                }else{
-                    if ((downY > upY) && (deltaY > minScrollY)) {
-                        MyLog.LogMessage("UP", "isOnfocusScrollView: " + isOnfocusScrollView);
+                        slideDownMainLayout(main_layout.getY(),duration);
 
-                        if (isOnfocusScrollView) {
+                    } else if (isOnfocusScrollView &&(downY > upY) && (deltaY < minScrollY)) {
+
+                        slideDownMainLayout(main_layout.getY(),duration);
+
+                    } else if (isOnfocusScrollView &&(downY < upY) && (deltaY < minSlideDownStartY)) {
+
+                        if(startY==0) {
                             slideUpMainLayout(startY, main_layout.getY(), duration);
-
-                        }
-                    } else if ((downY < upY) && (deltaY > minScrollY)) {
-                        if (isOnfocusScrollView) {
-                            slideDownMainLayout(main_layout.getY(),duration);
                         }
                     }
-                }
+
 
                 if (main_layout.getY() < 0) {
                     ViewHelper.setTranslationY(main_layout, 0);
                     isOnfocusScrollView = false;
-                    MyLog.LogMessage("UP","Motion.up 315 " + isOnfocusScrollView);
 
                 }
                 if (mVelocityTracker != null) {
                     mVelocityTracker.recycle();
                     mVelocityTracker = null;
                 }
-                Log.e("터치 옵", ", y: " + event.getY());
                 break;
         }
         return super.dispatchTouchEvent(event);
@@ -381,7 +340,6 @@ public class MainActivity extends ActionBarActivity {
                 public void onAnimationEnd(Animator animation) {
                     isOnfocusScrollView = false;
                     isOnReadyScrollView = false;
-                    MyLog.LogMessage("MOVE", "isOnfocusScrollView 375 " + isOnfocusScrollView);
                     mViewPager.setPagingEnabled();
 
                 }

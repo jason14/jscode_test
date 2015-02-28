@@ -3,6 +3,8 @@ package pr.jason.myuipratice;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,6 +23,7 @@ import pr.jason.myuipratice.util.DisplayConfig;
 import pr.jason.myuipratice.util.KeyPadText;
 import pr.jason.myuipratice.util.MyLog;
 import pr.jason.myuipratice.util.PreferenceManager;
+import pr.jason.myuipratice.util.Utils;
 
 /**
  * Created by Jaesin on 2015-02-05.
@@ -53,6 +56,7 @@ public class DialFragment extends Fragment{
     private EditText contact_search_et;
     private LinearLayout mBtn1,mBtn2,mBtn3,mBtn4,mBtn5,mBtn6,mBtn7,mBtn8,mBtn9,mBtn10,mBtn11,mBtn12,mBtn13,mBtn14,mBtn15;
     private String mCurKeyPad[][];
+    DialAdapter dialAdapter;
 
     public static DialFragment newInstance(String title){
         DialFragment dialFragment = new DialFragment();
@@ -87,6 +91,8 @@ public class DialFragment extends Fragment{
         dial_layout = (LinearLayout)view.findViewById(R.id.dial_layout);
         result_list =(ListView) view.findViewById(R.id.result_list);
         contact_search_et = (EditText)view.findViewById(R.id.contact_search_et);
+        contact_search_et.setInputType(0);
+        contact_search_et.addTextChangedListener(mTextWatcher);
 
         LinearLayout.LayoutParams content_layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)content_height);
         content_layout.setLayoutParams(content_layoutParams);
@@ -108,8 +114,13 @@ public class DialFragment extends Fragment{
         bottom_layout.setFocusableInTouchMode(true);
         bottom_layout.setFocusable(true);
         bottom_layout.setOnTouchListener(dialPositionChangeListener);
+
+        resultArray = new ArrayList<ContactsClass>();
+
         return view;
     }
+
+
 
     private View.OnTouchListener dialPositionChangeListener = new View.OnTouchListener() {
 
@@ -128,20 +139,19 @@ public class DialFragment extends Fragment{
                         Log.e("터치 무브","x: "+x + ", y: " + y);
 
                         if(Math.abs(x) > TOLERANCE && Math.abs(y) < TOLERANCE){
-                            // Log.e("터치 무브","x: "+downX + ", y: " + downY);
 
                             AnimatorSet set = new AnimatorSet();
 
                             if(initDialPosition == RIGHT) {
                                 if (x > 0 && dialPosition == LEFT) {
                                     set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(dial_layout, "translationX", -listview_width, 0),
-                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", 0, -dial_width));
+                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", 0, dial_width));
                                     dialPosition = RIGHT;
                                     preferenceManager.put("DIAL_POSITION", dialPosition);
                                     returnValue = true;
                                 } else if (x < 0 && dialPosition == RIGHT) {
                                     set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(dial_layout, "translationX", 0, -listview_width),
-                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", -dial_width, 0));
+                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", dial_width, 0));
                                     dialPosition = LEFT;
                                     preferenceManager.put("DIAL_POSITION", dialPosition);
                                     returnValue = true;
@@ -151,7 +161,7 @@ public class DialFragment extends Fragment{
                             }else{
                                 if (x > 0 && dialPosition == LEFT) {
                                     set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(dial_layout, "translationX", 0, listview_width),
-                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", dial_width, 0));
+                                            com.nineoldandroids.animation.ObjectAnimator.ofFloat(result_list, "translationX", 0, 0));
                                     dialPosition = RIGHT;
                                     preferenceManager.put("DIAL_POSITION", dialPosition);
                                     returnValue = true;
@@ -257,6 +267,7 @@ public class DialFragment extends Fragment{
         mBtn8.setOnClickListener(mDialBtnClickListener);
         mBtn9.setOnClickListener(mDialBtnClickListener);
         mBtn11.setOnClickListener(mDialBtnClickListener);
+        mBtn12.setOnClickListener(mBackSpace);
 
         mBtn1.setOnTouchListener(dialPositionChangeListener);
         mBtn2.setOnTouchListener(dialPositionChangeListener);
@@ -270,6 +281,47 @@ public class DialFragment extends Fragment{
         mBtn11.setOnTouchListener(dialPositionChangeListener);
     }
 
+    private PhoneNumberFormattingTextWatcher mTextWatcher = new PhoneNumberFormattingTextWatcher() {
+
+
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            dialAdapter = null;
+            dialAdapter = new DialAdapter(getActivity().getApplicationContext(),resultArray,MainActivity.options);
+            result_list.setAdapter(dialAdapter);
+            if(s.length()==0){
+                resultArray.clear();
+            }else{
+                setSearchResultList(contact_search_et.getText().toString());
+
+            }
+            dialAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private void setSearchResultList(String str){
+        resultArray.clear();
+        String inputStr = str.replace("-","");
+        inputStr = inputStr.trim();
+        for(int i=0; i < contactsArray.size(); i++){
+            if(contactsArray.get(i).friendNum.contains(inputStr)){
+                resultArray.add(contactsArray.get(i));
+            }
+        }
+
+    }
+
     private View.OnClickListener mDialBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -280,4 +332,15 @@ public class DialFragment extends Fragment{
             MyLog.LogMessage("클릭 버튼",""+inputNum);
         }
     };
+
+    private View.OnClickListener mBackSpace = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            inputNum =  Utils.deleteLastCharacter(inputNum);
+            contact_search_et.setText(inputNum);
+        }
+    };
+
+
+
 }

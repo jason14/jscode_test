@@ -79,7 +79,9 @@ public class StarredFragment extends Fragment{
                 }else{
                     isListViewScrollTop = false;
                 }
-                super.onScrollStateChanged(recyclerView, newState);
+                if(MainActivity.isOnfocusScrollView == true){
+                    recyclerView.scrollToPosition(0);
+                }
             }
         });
 

@@ -19,6 +19,8 @@
                 android:gravity="center"
                 android:cursorVisible="false"
                 android:background="#00ffffff"
+                android:textSize="22sp"
+                android:textColor="#ffffff"
                 android:id="@+id/contact_search_et"/>
 
         </LinearLayout>

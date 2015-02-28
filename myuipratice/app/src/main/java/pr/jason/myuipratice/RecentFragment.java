@@ -54,7 +54,6 @@ public class RecentFragment extends Fragment {
         MainActivity.isOnfocusScrollView = false;
         callsArray = new ArrayList<ContactsClass>();
         callsArray = getCallsList();
-       // callsArray = addPhotoUri(callsArray);
         RecentAdapter recentAdapter = new RecentAdapter(getActivity().getApplicationContext(),callsArray,MainActivity.options);
         listView =(ListView)view.findViewById(R.id.listview);
         listView.setAdapter(recentAdapter);
@@ -68,6 +67,9 @@ public class RecentFragment extends Fragment {
                     isListViewScrollTop = true;
                 }else{
                     isListViewScrollTop = false;
+                }
+                if(MainActivity.isOnfocusScrollView == true){
+                    listView.scrollTo(0,0);
                 }
             }
 
@@ -85,7 +87,7 @@ public class RecentFragment extends Fragment {
                 if(MainActivity.isOnfocusScrollView){
                    // MainActivity.main_layout.requestDisallowInterceptTouchEvent(false);
                     MyLog.LogMessage("MOVE 터치",MainActivity.isOnfocusScrollView+" RecentFragment isOnfocusScrollView");
-                    event.setAction(MotionEvent.ACTION_CANCEL);
+                    //event.setAction(MotionEvent.ACTION_CANCEL);
                 }else{
                     MyLog.LogMessage("MOVE isListViewScrollTop",isListViewScrollTop+" isListViewScrollTop");
 
@@ -127,15 +129,18 @@ public class RecentFragment extends Fragment {
     @Override
     public void onResume() {
         Log.e("onResume ",""+"resume");
+        checkScrollPostion();
+    super.onResume();
+}
 
-            int scrolly = getScrollY();
-            Log.e("onResume scroll 위치",""+scrolly);
-            if(scrolly==0){
-                isListViewScrollTop = true;
-            }else {
-                isListViewScrollTop = false;
-            }
-        super.onResume();
+    private void checkScrollPostion(){
+        int scrolly = getScrollY();
+        Log.e("onResume scroll 위치",""+scrolly);
+        if(scrolly==0){
+            isListViewScrollTop = true;
+        }else {
+            isListViewScrollTop = false;
+        }
     }
 
     private int getScrollY(){
