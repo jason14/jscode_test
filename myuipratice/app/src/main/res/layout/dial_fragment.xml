@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#a0a"
        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/bottom_layout"
+            >
+
+            <pr.jason.myuipratice.widget.TouchableListView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/result_list"
+                android:text="Result"/>
+            <include
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/dial_layout"
+                layout="@layout/dial_form"
+
+                />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,28 +38,11 @@
                 android:gravity="center"
                 android:cursorVisible="false"
                 android:background="#00ffffff"
-                android:textSize="22sp"
+                android:textSize="32sp"
                 android:textColor="#ffffff"
                 android:id="@+id/contact_search_et"/>
 
         </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bottom_layout">
 
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/result_list"
-                android:text="Result"/>
-            <include
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/dial_layout"
-                layout="@layout/dial_form"
-                android:layout_toRightOf="@+id/result_list"
-                />
-        </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

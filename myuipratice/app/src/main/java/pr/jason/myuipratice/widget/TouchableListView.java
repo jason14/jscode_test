@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -14,9 +14,9 @@ import pr.jason.myuipratice.util.DisplayConfig;
 import pr.jason.myuipratice.util.PreferenceManager;
 
 /**
- * Created by Jaesin on 2015-02-28.
+ * Created by Jaesin on 2015-03-02.
  */
-public class TouchableLinearLayout extends LinearLayout{
+public class TouchableListView extends ListView {
 
     private float mStartX;
     private float mDownX;
@@ -37,27 +37,24 @@ public class TouchableLinearLayout extends LinearLayout{
     private static int curPosition = 0;
     private static int RIGHT = 1;
     private static int LEFT = 0;
-    public TouchableLinearLayout(Context context) {
+    public TouchableListView(Context context) {
         super(context);
     }
-    public TouchableLinearLayout(Context context, AttributeSet attrs) {
+    public TouchableListView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
-    public TouchableLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TouchableListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                setCurPosition(this.getWidth());
+
                 Log.e("DIAL", "Dial layout X: " + this.getX());
                 Log.e("DIAL", "Down layout X: " + event.getX());
                 Log.e("DIAL","Dial layout width: " + this.getWidth());
+                setCurPosition(this.getX());
                 mDownX = event.getX();
                 mStartX = this.getX();
                 mWidth = this.getWidth();
@@ -68,26 +65,26 @@ public class TouchableLinearLayout extends LinearLayout{
                 break;
             case MotionEvent.ACTION_UP:
                 mDX = (int)(event.getX() - mDownX);
-                Log.e("Slide","mStartXposition "  + mStartXposition);
-                Log.e("Slide","curPosition " + curPosition);
+                Log.e("Slide","mStartXposition listView"  + mStartXposition);
+                Log.e("Slide","curPosition listView" + curPosition);
                 if(Math.abs(mDX) > TOLERANCE && curPosition == LEFT){
                     if(mDX > 0 ){
                         slideRightForward();
-                        preferenceManager.put("DIAL_POSITION", 1);
+                        preferenceManager.put("DIAL_POSITION", 0);
 
                     }else{
                         slideRightBackward();
-                        preferenceManager.put("DIAL_POSITION", 1);
+                        preferenceManager.put("DIAL_POSITION", 0);
                     }
 
                 }else if(Math.abs(mDX) > TOLERANCE && curPosition != LEFT){
                     if(mDX > 0 ){
                         slideLeftBackward();
-                        preferenceManager.put("DIAL_POSITION", 0);
+                        preferenceManager.put("DIAL_POSITION", 1);
 
                     }else{
                         slideLeftForward();
-                        preferenceManager.put("DIAL_POSITION", 0);
+                        preferenceManager.put("DIAL_POSITION", 1);
 
                     }
 
@@ -96,9 +93,10 @@ public class TouchableLinearLayout extends LinearLayout{
         }
         return super.dispatchTouchEvent(event);
     }
+
     public void setCurPosition(float curPosition){
         if(curPosition < mSideView.getWidth()){
-            this.curPosition = LEFT;
+           this.curPosition = LEFT;
         }else{
             this.curPosition = RIGHT;
         }
@@ -106,9 +104,9 @@ public class TouchableLinearLayout extends LinearLayout{
 
     public AnimatorSet transScaleX(View v ,float startPosition,float endPostion, float startScale, float endScale){
         AnimatorSet transScaleX = new AnimatorSet();
-            transScaleX.playTogether(ObjectAnimator.ofFloat(v, "translationX", startPosition, endPostion),
-                    ObjectAnimator.ofFloat(v, "scaleX", startScale, endScale),
-                    ObjectAnimator.ofFloat(v, "scaleY", startScale, endScale));
+        transScaleX.playTogether(ObjectAnimator.ofFloat(v, "translationX", startPosition, endPostion),
+                ObjectAnimator.ofFloat(v, "scaleX", startScale, endScale),
+                ObjectAnimator.ofFloat(v, "scaleY", startScale, endScale));
 
         return transScaleX;
     }
@@ -243,9 +241,9 @@ public class TouchableLinearLayout extends LinearLayout{
     }
 
     public void slideRightForward() {
-            slideAniStart(rightForwardStart(this,mSideView,true),rightForwardEnd(this,mSideView,true),
-                    leftBackwardStart(mSideView, this,false),leftBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightForward() ");
+        slideAniStart(rightForwardStart(this,mSideView,true),rightForwardEnd(this,mSideView,true),
+                leftBackwardStart(mSideView, this,false),leftBackwardEnd(mSideView, this,false));
+        Log.e("Slide","slideRightForward() listView");
     }
 
 
@@ -253,20 +251,20 @@ public class TouchableLinearLayout extends LinearLayout{
     public void slideRightBackward(){
         slideAniStart(rightBackwardStart(this, mSideView,true),rightBackwardEnd(this, mSideView,true),
                 leftForwardStart(mSideView, this,false),leftForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightBackward() ");
+        Log.e("Slide","slideRightBackward() listView");
     }
 
     public void slideLeftForward(){
         slideAniStart(leftForwardStart(this, mSideView,true),leftForwardEnd(this, mSideView,true),
                 rightBackwardStart(mSideView, this,false),rightBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftForward() ");
+        Log.e("Slide","slideLeftForward() listView");
 
     }
 
     public void slideLeftBackward(){
         slideAniStart(leftBackwardStart(this,mSideView,true),leftBackwardEnd(this,mSideView,true),
                 rightForwardStart(mSideView, this,false),rightForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftBackward() ");
+        Log.e("Slide","slideLeftBackward() listView");
 
     }
 
@@ -274,7 +272,7 @@ public class TouchableLinearLayout extends LinearLayout{
 
     public void setInit(Context context,int startXposition,View sideView,PreferenceManager preferenceManager){
         mContext = context;
-        TOLERANCE = DisplayConfig.convertDpToPixel(30,mContext);
+        TOLERANCE = DisplayConfig.convertDpToPixel(30, mContext);
         mStartXposition = startXposition;
         mSideView = sideView;
         this.preferenceManager = preferenceManager;
