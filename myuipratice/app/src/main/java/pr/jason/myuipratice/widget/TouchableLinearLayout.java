@@ -13,7 +13,7 @@ public class TouchableLinearLayout extends LinearLayout{
         super(context, attrs, defStyleAttr);
     }
 
-    
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
