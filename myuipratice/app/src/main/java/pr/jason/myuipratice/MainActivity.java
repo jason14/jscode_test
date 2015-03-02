@@ -232,7 +232,7 @@ public class MainActivity extends ActionBarActivity {
                                 } else {
                                     if(startY<downY) {
                                         mViewPager.setPagingDisabled();
-                                        ViewHelper.setTranslationY(main_layout, newY);
+                                       // ViewHelper.setTranslationY(main_layout, newY);
                                         isOnfocusScrollView = true;
                                     }
                                 }
@@ -296,7 +296,7 @@ public class MainActivity extends ActionBarActivity {
     private void slideDownMainLayout(float curY,int duration){
         AnimatorSet set = new AnimatorSet();
         set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(main_layout, "translationY", curY, maxScrollY));
-        if(isOnPageViewScroll ==false) {
+        if(isOnPageViewScroll == false) {
             set.setDuration(duration).start();
         }
         set.addListener(new Animator.AnimatorListener() {

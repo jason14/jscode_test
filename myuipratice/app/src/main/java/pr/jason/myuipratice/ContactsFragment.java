@@ -83,9 +83,7 @@ public class ContactsFragment extends Fragment{
                 }else{
                     isListViewScrollTop = false;
                 }
-                if(MainActivity.isOnfocusScrollView == true){
-                    view.scrollTo(0,0);
-                }
+
             }
 
             @Override
@@ -99,7 +97,8 @@ public class ContactsFragment extends Fragment{
             public boolean onTouch(View v, MotionEvent event) {
 
                 if(MainActivity.isOnfocusScrollView){
-
+                    listView.smoothScrollToPosition(0);
+                    listView.invalidate();
                 }else{
 
                     if(isListViewScrollTop){

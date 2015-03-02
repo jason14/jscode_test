@@ -62,7 +62,7 @@ public class RecentAdapter extends BaseAdapter{
         View v = convertView;
         if(convertView==null){
             viewHolder = new ViewHolder();
-            v = inflater.inflate(R.layout.recent_row,null);
+            v = inflater.inflate(R.layout.recent_row,parent, false);
             viewHolder.picture_iv = (ImageView)v.findViewById(R.id.picture_iv);
             viewHolder.name_tv = (TextView)v.findViewById(R.id.name_tv);
             viewHolder.number_tv = (TextView)v.findViewById(R.id.number_tv);
@@ -74,6 +74,8 @@ public class RecentAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder)v.getTag();
         }
+
+
         if(callArrays.get(position).friendName == null||callArrays.get(position).friendName.equals("")){
             viewHolder.name_tv.setVisibility(View.GONE);
         }else{

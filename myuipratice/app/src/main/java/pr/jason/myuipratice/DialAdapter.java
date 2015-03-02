@@ -51,7 +51,7 @@ public class DialAdapter extends BaseAdapter {
         View v = convertView;
         if(convertView==null){
             viewHolder = new ViewHolder();
-            v = inflater.inflate(R.layout.contacts_row,null);
+            v = inflater.inflate(R.layout.dial_contacts_row,null);
             viewHolder.imageView = (ImageView)v.findViewById(R.id.picture_iv);
             viewHolder.textView = (TextView)v.findViewById(R.id.name_tv);
             v.setTag(viewHolder);

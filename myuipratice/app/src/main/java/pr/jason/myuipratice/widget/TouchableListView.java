@@ -5,11 +5,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 
+import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import pr.jason.myuipratice.DialFragment;
 import pr.jason.myuipratice.util.DisplayConfig;
 import pr.jason.myuipratice.util.PreferenceManager;
 
@@ -30,8 +34,8 @@ public class TouchableListView extends ListView {
     private int mStartXposition;
     private boolean isFirstTouch = true;
     private View mSideView;
-    private static float MAX_VIEW_SCALE = 1.2f;
-    private static float MIN_VIEW_SCALE = 1.0f/1.2f;
+    private static float MAX_VIEW_SCALE = 1.1f;
+    private static float MIN_VIEW_SCALE = 1.0f/1.1f;
     private static float ORI_VIEW_SCALE = 1.0f;
     private static int DURATION = 200;
     private static int curPosition = 0;
@@ -50,7 +54,10 @@ public class TouchableListView extends ListView {
     public boolean dispatchTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-
+            if(DialFragment.isOnPositionChanged){
+                event.setAction(MotionEvent.ACTION_CANCEL);
+                break;
+            }
                 Log.e("DIAL", "Dial layout X: " + this.getX());
                 Log.e("DIAL", "Down layout X: " + event.getX());
                 Log.e("DIAL","Dial layout width: " + this.getWidth());
@@ -64,32 +71,41 @@ public class TouchableListView extends ListView {
 
                 break;
             case MotionEvent.ACTION_UP:
-                mDX = (int)(event.getX() - mDownX);
-                Log.e("Slide","mStartXposition listView"  + mStartXposition);
-                Log.e("Slide","curPosition listView" + curPosition);
-                if(Math.abs(mDX) > TOLERANCE && curPosition == LEFT){
-                    if(mDX > 0 ){
-                        slideRightForward();
-                        preferenceManager.put("DIAL_POSITION", 0);
+                if(DialFragment.isOnPositionChanged==false) {
+                    mDX = (int) (event.getX() - mDownX);
+                    Log.e("Slide", "mStartXposition listView" + mStartXposition);
+                    Log.e("Slide", "curPosition listView" + curPosition);
+                    if (Math.abs(mDX) > TOLERANCE && curPosition == LEFT) {
+                        DialFragment.isOnPositionChanged = true;
+                        if (mDX > 0) {
+                            slideRightForward();
+                            preferenceManager.put("DIAL_POSITION", 0);
+                            Log.e("isOnPositionChanged Ani listView", "RightForward");
 
-                    }else{
-                        slideRightBackward();
-                        preferenceManager.put("DIAL_POSITION", 0);
+                        } else {
+                            slideRightBackward();
+                            preferenceManager.put("DIAL_POSITION", 0);
+                            Log.e("isOnPositionChanged Ani listView", "slideRightBackward");
+
+                        }
+
+                    } else if (Math.abs(mDX) > TOLERANCE && curPosition != LEFT) {
+                        DialFragment.isOnPositionChanged = true;
+                        if (mDX > 0) {
+                            slideLeftBackward();
+                            preferenceManager.put("DIAL_POSITION", 1);
+                            Log.e("isOnPositionChanged Ani listView", "slideLeftBackward");
+
+                        } else {
+                            slideLeftForward();
+                            preferenceManager.put("DIAL_POSITION", 1);
+                            Log.e("isOnPositionChanged Ani listView", "slideLeftForward");
+
+                        }
+
                     }
-
-                }else if(Math.abs(mDX) > TOLERANCE && curPosition != LEFT){
-                    if(mDX > 0 ){
-                        slideLeftBackward();
-                        preferenceManager.put("DIAL_POSITION", 1);
-
-                    }else{
-                        slideLeftForward();
-                        preferenceManager.put("DIAL_POSITION", 1);
-
-                    }
-
+                    break;
                 }
-                break;
         }
         return super.dispatchTouchEvent(event);
     }
@@ -102,11 +118,29 @@ public class TouchableListView extends ListView {
         }
     }
 
-    public AnimatorSet transScaleX(View v ,float startPosition,float endPostion, float startScale, float endScale){
+
+    public AnimatorSet transScaleXStart(View v ,float startPosition,float endPostion, float startScale, float endScale){
         AnimatorSet transScaleX = new AnimatorSet();
-        transScaleX.playTogether(ObjectAnimator.ofFloat(v, "translationX", startPosition, endPostion),
-                ObjectAnimator.ofFloat(v, "scaleX", startScale, endScale),
-                ObjectAnimator.ofFloat(v, "scaleY", startScale, endScale));
+        ObjectAnimator transAni = ObjectAnimator.ofFloat(v, "translationX", startPosition, endPostion);
+        transAni.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator scaleXAni =  ObjectAnimator.ofFloat(v, "scaleX", startScale, endScale);
+        scaleXAni.setInterpolator(new DecelerateInterpolator());
+        ObjectAnimator scaleYAni = ObjectAnimator.ofFloat(v, "scaleY", startScale, endScale);
+        scaleYAni.setInterpolator(new DecelerateInterpolator());
+        transScaleX.playTogether(transAni,scaleXAni,scaleYAni);
+
+        return transScaleX;
+    }
+
+    public AnimatorSet transScaleXEnd(View v ,float startPosition,float endPostion, float startScale, float endScale){
+        AnimatorSet transScaleX = new AnimatorSet();
+        ObjectAnimator transAni = ObjectAnimator.ofFloat(v, "translationX", startPosition, endPostion);
+        transAni.setInterpolator(new DecelerateInterpolator());
+        ObjectAnimator scaleXAni =  ObjectAnimator.ofFloat(v, "scaleX", startScale, endScale);
+        scaleXAni.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator scaleYAni = ObjectAnimator.ofFloat(v, "scaleY", startScale, endScale);
+        scaleYAni.setInterpolator(new AccelerateInterpolator());
+        transScaleX.playTogether(transAni,scaleXAni,scaleYAni);
 
         return transScaleX;
     }
@@ -133,10 +167,10 @@ public class TouchableListView extends ListView {
 
         if(touchedXposition == 0) {
 
-            set = transScaleX(v,0,sideView.getWidth()/2,ORI_VIEW_SCALE,MAX_VIEW_SCALE);
+            set = transScaleXStart(v, 0, sideView.getWidth() / 2, ORI_VIEW_SCALE, MAX_VIEW_SCALE);
 
         }else{
-            set = transScaleX(v,-sideView.getWidth(),-sideView.getWidth()/2,ORI_VIEW_SCALE,MAX_VIEW_SCALE);
+            set = transScaleXStart(v, -sideView.getWidth(), -sideView.getWidth() / 2, ORI_VIEW_SCALE, MAX_VIEW_SCALE);
         }
         return set;
     }
@@ -146,9 +180,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth()/2,sideView.getWidth(),MAX_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, sideView.getWidth() / 2, sideView.getWidth(), MAX_VIEW_SCALE, ORI_VIEW_SCALE);
         }else{
-            set = transScaleX(v,-sideView.getWidth()/2,0,MAX_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, -sideView.getWidth() / 2, 0, MAX_VIEW_SCALE, ORI_VIEW_SCALE);
         }
         return set;
     }
@@ -160,9 +194,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth(),sideView.getWidth()/2,ORI_VIEW_SCALE,MAX_VIEW_SCALE);
+            set = transScaleXStart(v, sideView.getWidth(), sideView.getWidth() / 2, ORI_VIEW_SCALE, MAX_VIEW_SCALE);
         }else{
-            set = transScaleX(v,0,-sideView.getWidth()/2,ORI_VIEW_SCALE,MAX_VIEW_SCALE);
+            set = transScaleXStart(v, 0, -sideView.getWidth() / 2, ORI_VIEW_SCALE, MAX_VIEW_SCALE);
         }
         return set;
     }
@@ -172,9 +206,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth()/2,0,MAX_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, sideView.getWidth() / 2, 0, MAX_VIEW_SCALE, ORI_VIEW_SCALE);
         }else{
-            set = transScaleX(v,-sideView.getWidth()/2,-sideView.getWidth(),MAX_VIEW_SCALE, ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, -sideView.getWidth() / 2, -sideView.getWidth(), MAX_VIEW_SCALE, ORI_VIEW_SCALE);
         }
         return set;
     }
@@ -184,9 +218,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,0,sideView.getWidth()/2,ORI_VIEW_SCALE,MIN_VIEW_SCALE);
+            set = transScaleXStart(v, 0, sideView.getWidth() / 2, ORI_VIEW_SCALE, MIN_VIEW_SCALE);
         }else{
-            set = transScaleX(v,-sideView.getWidth(),-sideView.getWidth()/2,ORI_VIEW_SCALE,MIN_VIEW_SCALE);
+            set = transScaleXStart(v, -sideView.getWidth(), -sideView.getWidth() / 2, ORI_VIEW_SCALE, MIN_VIEW_SCALE);
         }
         return set;
     }
@@ -196,9 +230,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth()/2,sideView.getWidth(),MIN_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, sideView.getWidth() / 2, sideView.getWidth(), MIN_VIEW_SCALE, ORI_VIEW_SCALE);
         }else{
-            set = transScaleX(v,-sideView.getWidth()/2,0,MIN_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, -sideView.getWidth() / 2, 0, MIN_VIEW_SCALE, ORI_VIEW_SCALE);
         }
         return set;
     }
@@ -208,9 +242,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth(),sideView.getWidth()/2,ORI_VIEW_SCALE,MIN_VIEW_SCALE);
+            set = transScaleXStart(v, sideView.getWidth(), sideView.getWidth() / 2, ORI_VIEW_SCALE, MIN_VIEW_SCALE);
         }else{
-            set = transScaleX(v,0,-sideView.getWidth()/2,ORI_VIEW_SCALE,MIN_VIEW_SCALE);
+            set = transScaleXStart(v, 0, -sideView.getWidth() / 2, ORI_VIEW_SCALE, MIN_VIEW_SCALE);
         }
         return set;
     }
@@ -220,9 +254,9 @@ public class TouchableListView extends ListView {
         int touchedXposition = getStartXposition(isTouchedView);
 
         if(touchedXposition == 0) {
-            set = transScaleX(v,sideView.getWidth()/2,0,MIN_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, sideView.getWidth() / 2, 0, MIN_VIEW_SCALE, ORI_VIEW_SCALE);
         }else{
-            set = transScaleX(v,-sideView.getWidth()/2,-sideView.getWidth(),MIN_VIEW_SCALE,ORI_VIEW_SCALE);
+            set = transScaleXEnd(v, -sideView.getWidth() / 2, -sideView.getWidth(), MIN_VIEW_SCALE, ORI_VIEW_SCALE);
         }
         return set;
     }
@@ -235,9 +269,36 @@ public class TouchableListView extends ListView {
         end.playTogether(thisViewEndSet,sideViewEndSet);
         start.setDuration(DURATION);
         end.setDuration(DURATION);
+       /* start.setInterpolator(new AccelerateInterpolator());
+        end.setInterpolator(new DecelerateInterpolator());*/
         AnimatorSet slideActionSet = new AnimatorSet();
         slideActionSet.playSequentially(start,end);
+
+        Log.e("Slide isOnPositionChanged start","listView " +  DialFragment.isOnPositionChanged);
+
         slideActionSet.start();
+        slideActionSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                DialFragment.isOnPositionChanged = false;
+                Log.e("Slide isOnPositionChanged end","listView " +  DialFragment.isOnPositionChanged);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
     public void slideRightForward() {

@@ -68,9 +68,7 @@ public class RecentFragment extends Fragment {
                 }else{
                     isListViewScrollTop = false;
                 }
-                if(MainActivity.isOnfocusScrollView == true){
-                    listView.scrollTo(0,0);
-                }
+
             }
 
             @Override
@@ -85,9 +83,10 @@ public class RecentFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
 
                 if(MainActivity.isOnfocusScrollView){
-                   // MainActivity.main_layout.requestDisallowInterceptTouchEvent(false);
-                    MyLog.LogMessage("MOVE 터치",MainActivity.isOnfocusScrollView+" RecentFragment isOnfocusScrollView");
-                    //event.setAction(MotionEvent.ACTION_CANCEL);
+                    MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
+                    MyLog.LogMessage("MOVE setOnTouchListener",MainActivity.isOnfocusScrollView+" RecentFragment isOnfocusScrollView");
+                    listView.smoothScrollToPosition(0);
+                    listView.invalidate();
                 }else{
                     MyLog.LogMessage("MOVE isListViewScrollTop",isListViewScrollTop+" isListViewScrollTop");
 

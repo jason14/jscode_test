@@ -5,18 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 
@@ -61,10 +61,11 @@ public class DialFragment extends Fragment{
     private String mCurKeyPad[][];
     DialAdapter dialAdapter;
     private Context mContext;
+    public static boolean isOnPositionChanged = false;
     public static DialFragment newInstance(String title){
         DialFragment dialFragment = new DialFragment();
         Bundle args = new Bundle();
-        args.putString("someTitle",title);
+        args.putString("someTitle", title);
         dialFragment.setArguments(args);
         return dialFragment;
     }
@@ -118,6 +119,7 @@ public class DialFragment extends Fragment{
 
         }
         result_list.setLayoutParams(listview_layoutParams);
+
         dial_layout.setLayoutParams(dial_layoutParams);
         setDialBtns(view);
 
@@ -125,9 +127,69 @@ public class DialFragment extends Fragment{
         bottom_layout.setFocusable(true);
 
         resultArray = new ArrayList<ContactsClass>();
-
+        result_list.setOnScrollListener(mScrollListener);
         return view;
     }
+
+    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            view.smoothScrollToPosition(2);
+        }
+        boolean firstOne = true;
+        boolean firstTwo = true;
+        boolean firstThree = true;
+        float alphaRate = 0f;
+        float itemHeight = 0f;
+        boolean isFirstScrollViewCheck = true;
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if(visibleItemCount!=0){
+
+                int curFirstVisibleItem = firstVisibleItem%visibleItemCount;
+                View firstViewView = view.getChildAt(curFirstVisibleItem);
+                View secondViewView = view.getChildAt(curFirstVisibleItem+1);
+
+
+                Log.e("Dial List Scroll", "curFirstVisibleItem: " + curFirstVisibleItem);
+                Log.e("Dial List Scroll", "visibleItemCount: " + visibleItemCount);
+
+                Log.e("Dial List Scroll", "firstVisibleItem: " + firstVisibleItem);
+
+                if(firstViewView != null) {
+                    int height = firstViewView.getHeight();
+                    float positionY = firstViewView.getY();
+
+
+
+                    if(isFirstScrollViewCheck) {
+                        itemHeight = secondViewView.getY() - firstViewView.getHeight();
+                        isFirstScrollViewCheck = false;
+                    }
+                    float startItemstartY = (float)curFirstVisibleItem * itemHeight;
+                    float rateDenominator = startItemstartY - positionY;
+
+                    if(rateDenominator !=0) {
+                        alphaRate = 1.0f / rateDenominator;
+                        if(alphaRate > 1.0f){
+                            alphaRate = 1.0f;
+                        }
+                        if(itemHeight == rateDenominator){
+                            alphaRate = 1.0f;
+                        }
+                    }else{
+                        alphaRate = 1.0f;
+                    }
+                    ViewHelper.setAlpha(firstViewView,alphaRate);
+                    Log.e("Dial List Scroll", "firstVisibleItem: " + firstVisibleItem);
+                    Log.e("Dial List Scroll", "height:           " + height);
+                    Log.e("Dial List Scroll", "positionY:        " + positionY);
+                    Log.e("Dial List Scroll", "alphaRate:        " + alphaRate);
+
+                }
+            }
+        }
+    };
 
     private void initUiResource(){
         content_height = MainActivity.mDisHeight/2;
@@ -232,6 +294,7 @@ public class DialFragment extends Fragment{
             int tag = (int)v.getTag();
             String id = ""+tag;
             inputNum += id;
+            inputNum = PhoneNumberUtils.formatNumber(inputNum);
             contact_search_et.setText(inputNum);
             MyLog.LogMessage("클릭 버튼",""+inputNum);
         }
@@ -240,7 +303,10 @@ public class DialFragment extends Fragment{
     private View.OnClickListener mBackSpace = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            inputNum =  Utils.deleteLastCharacter(inputNum);
+            String inputStr = inputNum.replace("-","");
+            inputStr = inputStr.trim();
+            inputNum =  Utils.deleteLastCharacter(inputStr);
+            inputNum = PhoneNumberUtils.formatNumber(inputNum);
             contact_search_et.setText(inputNum);
         }
     };
