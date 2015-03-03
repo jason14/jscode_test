@@ -1,6 +1,7 @@
 package pr.jason.myuipratice;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class DialAdapter extends BaseAdapter {
             viewHolder.imageView = (ImageView)v.findViewById(R.id.picture_iv);
             viewHolder.textView = (TextView)v.findViewById(R.id.name_tv);
             v.setTag(viewHolder);
+
         }else{
             viewHolder = (ViewHolder)v.getTag();
         }
@@ -66,6 +68,7 @@ public class DialAdapter extends BaseAdapter {
         }else{
 
         }
+        Log.e("Dial getView ", "position: " + position + " getY: " + v.getY());
         return v;
     }
 

@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.nineoldandroids.view.ViewHelper;
@@ -62,6 +64,7 @@ public class DialFragment extends Fragment{
     DialAdapter dialAdapter;
     private Context mContext;
     public static boolean isOnPositionChanged = false;
+    public static float listRowHeight;
     public static DialFragment newInstance(String title){
         DialFragment dialFragment = new DialFragment();
         Bundle args = new Bundle();
@@ -104,7 +107,7 @@ public class DialFragment extends Fragment{
         RelativeLayout.LayoutParams bottom_layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         bottom_layout.setLayoutParams(bottom_layoutParams);
 
-        RelativeLayout.LayoutParams listview_layoutParams = new RelativeLayout.LayoutParams((int)listview_width,(int)bottom_height);
+        RelativeLayout.LayoutParams listview_layoutParams = new RelativeLayout.LayoutParams((int)listview_width,(int)bottom_height+(int)(bottom_height/5));
         listview_layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,bottom_layout.getId());
         RelativeLayout.LayoutParams dial_layoutParams = new RelativeLayout.LayoutParams((int)dial_width,(int)bottom_height);
         dial_layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,bottom_layout.getId());
@@ -128,65 +131,98 @@ public class DialFragment extends Fragment{
 
         resultArray = new ArrayList<ContactsClass>();
         result_list.setOnScrollListener(mScrollListener);
+        ViewTreeObserver vto = result_list.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(result_list.getChildAt(0)!=null){
+                    Log.e("onGlobalLayout","onGlobalLayout height " + result_list.getChildAt(0).getHeight());
+                    listRowHeight = result_list.getChildAt(0).getHeight();
+
+                }else{
+                    Log.e("onGlobalLayout In","onGlobalLayout  In"  );
+                }
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        //listRowHeight = result_list.getChildAt(0).getHeight();
+        //listRowHeight = 256;
+        Log.e("Fade","onActivityCreated listRowHeight: "+listRowHeight);
+    }
+
+    public void getFadeOutView(ListView v, float rowHeight,int firstVisibleItem, int visibleItemCount){
+        int firstWantedPosition = firstVisibleItem;
+        int wantedPosition = firstVisibleItem+1; // Whatever position you're looking for
+        int firstPosition = v.getFirstVisiblePosition() - v.getHeaderViewsCount(); // This is the same as child #0
+        int wantedChild = wantedPosition - firstPosition;
+        int firstWantedChild = firstWantedPosition - firstPosition;
+// Say, first visible position is 8, you want position 10, wantedChild will now be 2
+// So that means your view is child #2 in the ViewGroup:
+        if (wantedChild < 0 || wantedChild >= v.getChildCount()) {
+            //Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
+            return;
+        }
+        if (firstWantedChild < 0 || firstWantedChild >= v.getChildCount()) {
+            //Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
+            return;
+        }
+// Could also check if wantedPosition is between listView.getFirstVisiblePosition() and listView.getLastVisiblePosition() instead.
+        View wantedView = v.getChildAt(wantedChild);
+        View firstWantedView = v.getChildAt(firstWantedChild);
+        Log.e("Fade", "onScroll firstVisibleItem " + firstVisibleItem);
+        Log.e("Fade", "onScroll wantedChild " + wantedChild);
+
+        int visibleCount =v.getLastVisiblePosition() - v.getFirstVisiblePosition();
+        Log.e("Fade", "onScroll visibleCount " + visibleCount);
+        Log.e("Fade", "onScroll getLastVisiblePosition " + v.getLastVisiblePosition());
+        Log.e("Fade", "onScroll getFirstVisiblePosition " + v.getFirstVisiblePosition());
+
+        for(int i = 0; i < visibleCount+1; i++){
+            if(i==wantedChild){
+                if(wantedView.getY() < listRowHeight){
+                   // wantedView.setVisibility(View.INVISIBLE);
+                    Log.e("Fade", "onScroll getY " + wantedView.getY());
+                    float alphaRate = (wantedView.getY())/listRowHeight;
+                    ViewHelper.setAlpha(wantedView,alphaRate);
+                    Log.e("Fade", "onScroll firstVisibleItem " + firstVisibleItem);
+                    Log.e("Fade", "onScroll alphaRate" + alphaRate);
+
+                    //wantedView.invalidate();
+                }else{
+                    Log.e("Fade", "onScroll firstVisibleItem VISIBLE" + firstVisibleItem);
+                    ViewHelper.setAlpha(wantedView,1.0f);
+                }
+            }else if(firstWantedChild==i){
+                ViewHelper.setAlpha(v.getChildAt(i),0f);
+            }
+            else{
+                //v.getChildAt(i).setVisibility(View.VISIBLE);
+                Log.e("Fade", "onScroll i VISIBLE" + i);
+                ViewHelper.setAlpha(v.getChildAt(i),1.0f);
+            }
+        }
+
+
+
+
     }
 
     private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-            view.smoothScrollToPosition(2);
+
         }
-        boolean firstOne = true;
-        boolean firstTwo = true;
-        boolean firstThree = true;
-        float alphaRate = 0f;
-        float itemHeight = 0f;
-        boolean isFirstScrollViewCheck = true;
+
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            if(visibleItemCount!=0){
-
-                int curFirstVisibleItem = firstVisibleItem%visibleItemCount;
-                View firstViewView = view.getChildAt(curFirstVisibleItem);
-                View secondViewView = view.getChildAt(curFirstVisibleItem+1);
-
-
-                Log.e("Dial List Scroll", "curFirstVisibleItem: " + curFirstVisibleItem);
-                Log.e("Dial List Scroll", "visibleItemCount: " + visibleItemCount);
-
-                Log.e("Dial List Scroll", "firstVisibleItem: " + firstVisibleItem);
-
-                if(firstViewView != null) {
-                    int height = firstViewView.getHeight();
-                    float positionY = firstViewView.getY();
-
-
-
-                    if(isFirstScrollViewCheck) {
-                        itemHeight = secondViewView.getY() - firstViewView.getHeight();
-                        isFirstScrollViewCheck = false;
-                    }
-                    float startItemstartY = (float)curFirstVisibleItem * itemHeight;
-                    float rateDenominator = startItemstartY - positionY;
-
-                    if(rateDenominator !=0) {
-                        alphaRate = 1.0f / rateDenominator;
-                        if(alphaRate > 1.0f){
-                            alphaRate = 1.0f;
-                        }
-                        if(itemHeight == rateDenominator){
-                            alphaRate = 1.0f;
-                        }
-                    }else{
-                        alphaRate = 1.0f;
-                    }
-                    ViewHelper.setAlpha(firstViewView,alphaRate);
-                    Log.e("Dial List Scroll", "firstVisibleItem: " + firstVisibleItem);
-                    Log.e("Dial List Scroll", "height:           " + height);
-                    Log.e("Dial List Scroll", "positionY:        " + positionY);
-                    Log.e("Dial List Scroll", "alphaRate:        " + alphaRate);
-
-                }
+            if(visibleItemCount!=0) {
+                getFadeOutView((ListView)view, listRowHeight,firstVisibleItem,visibleItemCount);
             }
         }
     };
@@ -286,6 +322,8 @@ public class DialFragment extends Fragment{
                 resultArray.add(contactsArray.get(i));
             }
         }
+        ContactsClass dummyClass = new ContactsClass();
+        resultArray.add(0,dummyClass);
     }
 
     private View.OnClickListener mDialBtnClickListener = new View.OnClickListener() {
