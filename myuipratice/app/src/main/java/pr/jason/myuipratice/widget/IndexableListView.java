@@ -16,7 +16,7 @@ public class IndexableListView extends ListView {
     private boolean mIsFastScrollEnabled = false;
     private IndexScroller mScroller = null;
     private GestureDetector mGestureDetector = null;
-
+    public int customTopMargin;
     public IndexableListView(Context context) {
         super(context);
     }
@@ -93,7 +93,19 @@ public class IndexableListView extends ListView {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (mScroller != null)
-            mScroller.onSizeChanged(w, h, oldw, oldh);
+            mScroller.onSizeChanged(w, h, customTopMargin, oldh);
+        tmp_w =w;
+        tmp_h= h;
+        tmp_oldh = oldh;
+
+    }
+    int tmp_w;
+    int tmp_h;
+    int tmp_oldh;
+    public void setCustomTopMargin(int topMargin){
+        customTopMargin = topMargin;
+        if (mScroller != null)
+            mScroller.onSizeChanged(tmp_w, tmp_h, customTopMargin, tmp_oldh);
     }
 
 

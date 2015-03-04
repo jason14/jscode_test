@@ -127,6 +127,7 @@ public class ContactsFragment extends Fragment{
                     searchEditTextHeight = listView.getChildAt(0).getHeight();
                     RelativeLayout.LayoutParams searchLP =  new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)searchEditTextHeight);
                     searchEditText.setLayoutParams(searchLP);
+                    listView.setCustomTopMargin((int)searchEditTextHeight);
                 }
             }
         });
