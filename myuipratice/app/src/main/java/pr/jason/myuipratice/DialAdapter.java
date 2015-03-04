@@ -1,16 +1,14 @@
 package pr.jason.myuipratice;
 
 import android.content.Context;
-import android.util.Log;
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
@@ -53,28 +51,36 @@ public class DialAdapter extends BaseAdapter {
         if(convertView==null){
             viewHolder = new ViewHolder();
             v = inflater.inflate(R.layout.dial_contacts_row,null);
-            viewHolder.imageView = (ImageView)v.findViewById(R.id.picture_iv);
-            viewHolder.textView = (TextView)v.findViewById(R.id.name_tv);
+            viewHolder.name_tv = (TextView)v.findViewById(R.id.name_tv);
+            viewHolder.what_number_tv = (TextView)v.findViewById(R.id.what_number_tv);
+            viewHolder.number_tv = (TextView)v.findViewById(R.id.number_tv);
             v.setTag(viewHolder);
 
         }else{
             viewHolder = (ViewHolder)v.getTag();
         }
-        viewHolder.textView.setTextAppearance(mContext,R.style.myListRowText);
-        viewHolder.textView.setText(resultArrays.get(position).friendName);
+        viewHolder.name_tv.setTextAppearance(mContext,R.style.myDialListRowText);
 
-        if(resultArrays.get(position).friendPictureUrl != null && !resultArrays.get(position).friendPictureUrl.equals("")) {
-            ImageLoader.getInstance().displayImage(resultArrays.get(position).friendPictureUrl.toString(), viewHolder.imageView, options, animateFirstListener);
-        }else{
+        viewHolder.name_tv.setText(resultArrays.get(position).friendName);
 
+        viewHolder.what_number_tv.setText(MainActivity.getPhoneType(mContext, resultArrays.get(position).phone_type));
+
+        String formattedPhonNumber = "";
+        String resultPhoneNum = resultArrays.get(position).friendNum;
+        if(resultPhoneNum!=null&&!resultPhoneNum.equals("")){
+            resultPhoneNum = resultPhoneNum.replace("-","");
+            resultPhoneNum = resultPhoneNum.trim();
+            formattedPhonNumber = PhoneNumberUtils.formatNumber(resultPhoneNum);
         }
-        Log.e("Dial getView ", "position: " + position + " getY: " + v.getY());
+        viewHolder.number_tv.setText(formattedPhonNumber);
+
         return v;
     }
 
     class ViewHolder{
-        ImageView imageView;
-        TextView textView;
+        TextView name_tv;
+        TextView what_number_tv;
+        TextView number_tv;
 
     }
 }

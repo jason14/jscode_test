@@ -81,7 +81,7 @@ public class RecentAdapter extends BaseAdapter{
         }else{
             viewHolder.name_tv.setVisibility(View.VISIBLE);
             viewHolder.name_tv.setText(callArrays.get(position).friendName);
-            viewHolder.name_tv.setTextAppearance(mContext,R.style.myListRowText);
+            viewHolder.name_tv.setTextAppearance(mContext,R.style.myContactsListRowText);
         //    Log.e("friendName"," friendName : " + callArrays.get(position).friendName+ " ");
 
         }

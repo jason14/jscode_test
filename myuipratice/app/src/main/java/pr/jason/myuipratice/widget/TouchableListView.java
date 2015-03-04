@@ -2,7 +2,6 @@ package pr.jason.myuipratice.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -24,15 +23,13 @@ public class TouchableListView extends ListView {
 
     private float mStartX;
     private float mDownX;
-    private float mUpX;
-    private float mEndX;
-    private float mMoveX;
+    private float mDownY;
     private float mWidth;
     private int mDX;
+    private int mDY;
     private static float TOLERANCE;
     private Context mContext;
     private int mStartXposition;
-    private boolean isFirstTouch = true;
     private View mSideView;
     private static float MAX_VIEW_SCALE = 1.1f;
     private static float MIN_VIEW_SCALE = 1.0f/1.1f;
@@ -58,11 +55,11 @@ public class TouchableListView extends ListView {
                 event.setAction(MotionEvent.ACTION_CANCEL);
                 break;
             }
-                Log.e("DIAL", "Dial layout X: " + this.getX());
-                Log.e("DIAL", "Down layout X: " + event.getX());
-                Log.e("DIAL","Dial layout width: " + this.getWidth());
+
                 setCurPosition(this.getX());
                 mDownX = event.getX();
+                mDownY = event.getY();
+
                 mStartX = this.getX();
                 mWidth = this.getWidth();
 
@@ -73,33 +70,30 @@ public class TouchableListView extends ListView {
             case MotionEvent.ACTION_UP:
                 if(DialFragment.isOnPositionChanged==false) {
                     mDX = (int) (event.getX() - mDownX);
-                    Log.e("Slide", "mStartXposition listView" + mStartXposition);
-                    Log.e("Slide", "curPosition listView" + curPosition);
-                    if (Math.abs(mDX) > TOLERANCE && curPosition == LEFT) {
+                    mDY = (int) (event.getY() - mDownY);
+
+
+                    if (Math.abs(mDX)>Math.abs(mDY) && Math.abs(mDX) > TOLERANCE && curPosition == LEFT) {
                         DialFragment.isOnPositionChanged = true;
                         if (mDX > 0) {
                             slideRightForward();
                             preferenceManager.put("DIAL_POSITION", 0);
-                            Log.e("isOnPositionChanged Ani listView", "RightForward");
 
                         } else {
                             slideRightBackward();
                             preferenceManager.put("DIAL_POSITION", 0);
-                            Log.e("isOnPositionChanged Ani listView", "slideRightBackward");
 
                         }
 
-                    } else if (Math.abs(mDX) > TOLERANCE && curPosition != LEFT) {
+                    } else if (Math.abs(mDX)>Math.abs(mDY) && Math.abs(mDX) > TOLERANCE && curPosition != LEFT) {
                         DialFragment.isOnPositionChanged = true;
                         if (mDX > 0) {
                             slideLeftBackward();
                             preferenceManager.put("DIAL_POSITION", 1);
-                            Log.e("isOnPositionChanged Ani listView", "slideLeftBackward");
 
                         } else {
                             slideLeftForward();
                             preferenceManager.put("DIAL_POSITION", 1);
-                            Log.e("isOnPositionChanged Ani listView", "slideLeftForward");
 
                         }
 
@@ -269,12 +263,10 @@ public class TouchableListView extends ListView {
         end.playTogether(thisViewEndSet,sideViewEndSet);
         start.setDuration(DURATION);
         end.setDuration(DURATION);
-       /* start.setInterpolator(new AccelerateInterpolator());
-        end.setInterpolator(new DecelerateInterpolator());*/
+
         AnimatorSet slideActionSet = new AnimatorSet();
         slideActionSet.playSequentially(start,end);
 
-        Log.e("Slide isOnPositionChanged start","listView " +  DialFragment.isOnPositionChanged);
 
         slideActionSet.start();
         slideActionSet.addListener(new Animator.AnimatorListener() {
@@ -286,7 +278,6 @@ public class TouchableListView extends ListView {
             @Override
             public void onAnimationEnd(Animator animation) {
                 DialFragment.isOnPositionChanged = false;
-                Log.e("Slide isOnPositionChanged end","listView " +  DialFragment.isOnPositionChanged);
             }
 
             @Override
@@ -304,7 +295,6 @@ public class TouchableListView extends ListView {
     public void slideRightForward() {
         slideAniStart(rightForwardStart(this,mSideView,true),rightForwardEnd(this,mSideView,true),
                 leftBackwardStart(mSideView, this,false),leftBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightForward() listView");
     }
 
 
@@ -312,20 +302,17 @@ public class TouchableListView extends ListView {
     public void slideRightBackward(){
         slideAniStart(rightBackwardStart(this, mSideView,true),rightBackwardEnd(this, mSideView,true),
                 leftForwardStart(mSideView, this,false),leftForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightBackward() listView");
     }
 
     public void slideLeftForward(){
         slideAniStart(leftForwardStart(this, mSideView,true),leftForwardEnd(this, mSideView,true),
                 rightBackwardStart(mSideView, this,false),rightBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftForward() listView");
 
     }
 
     public void slideLeftBackward(){
         slideAniStart(leftBackwardStart(this,mSideView,true),leftBackwardEnd(this,mSideView,true),
                 rightForwardStart(mSideView, this,false),rightForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftBackward() listView");
 
     }
 
@@ -333,7 +320,7 @@ public class TouchableListView extends ListView {
 
     public void setInit(Context context,int startXposition,View sideView,PreferenceManager preferenceManager){
         mContext = context;
-        TOLERANCE = DisplayConfig.convertDpToPixel(30, mContext);
+        TOLERANCE = DisplayConfig.convertDpToPixel(80, mContext);
         mStartXposition = startXposition;
         mSideView = sideView;
         this.preferenceManager = preferenceManager;

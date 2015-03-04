@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+    <!--kr-->
 <resources>
 
     <string name="app_name">myuipratice</string>
@@ -9,5 +10,14 @@
     <string name="call_made">발신 전화</string>
     <string name="call_received">수신 전화</string>
     <string name="call_rejected">수신 거부</string>
+    <string name="phone_type_home">집</string>
+    <string name="phone_type_work">회사</string>
+    <string name="phone_type_mobile">휴대전화</string>
+    <string name="phone_type_main">대표전화</string>
+    <string name="phone_type_fax_work">회사팩스</string>
+    <string name="phone_type_fax_home">집팩스</string>
+    <string name="phone_type_isdn">호출기</string>
+    <string name="phone_type_other">기타</string>
+    <string name="phone_type_custom"></string>
 
 </resources>

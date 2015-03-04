@@ -10,8 +10,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -38,7 +41,9 @@ public class ContactsFragment extends Fragment{
     private MainActivity mainActivity;
     private boolean isListViewScrollTop = true;
     IndexableListView listView;
-
+    private ArrayList<ContactsClass> resultsArray;
+    private EditText searchEditText;
+    float searchEditTextHeight;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -63,16 +68,13 @@ public class ContactsFragment extends Fragment{
         View view = inflater.inflate(R.layout.contacts_fragment,container,false);
         //연락처 목록 받기
         contactsArray = new ArrayList<ContactsClass>();
-        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList(false);
-
-        //getPhoneBoolList();
-        //정렬
+        resultsArray = new ArrayList<ContactsClass>();
+        contactsArray = MainActivity.getPhoneBooKList(false,getActivity().getApplicationContext());
         setSortArrayList();
         listView = (IndexableListView)view.findViewById(R.id.listview);
         ContactAdapter contactAdapter = new ContactAdapter(context,R.layout.contacts_row,contactsArray, MainActivity.options);
         listView.setAdapter(contactAdapter);
         listView.setFastScrollEnabled(true);
-        Log.e("연락처 배열 개수", "" + contactsArray.size());
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -91,6 +93,8 @@ public class ContactsFragment extends Fragment{
 
             }
         });
+
+        //listView.scrollerSizeChange(50,0,40,1500);
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -114,7 +118,27 @@ public class ContactsFragment extends Fragment{
             }
         });
 
+        searchEditTextHeight = 0f;
+        ViewTreeObserver vto = listView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(listView.getChildAt(0)!=null){
+                    searchEditTextHeight = listView.getChildAt(0).getHeight();
+                    RelativeLayout.LayoutParams searchLP =  new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)searchEditTextHeight);
+                    searchEditText.setLayoutParams(searchLP);
+                }
+            }
+        });
+        searchEditText = (EditText)view.findViewById(R.id.search_et);
+
         return view;
+    }
+
+    public ArrayList<ContactsClass> getResultsArray(String keyworkd){
+        resultsArray.clear();
+
+        return resultsArray;
     }
 
     @Override
@@ -179,6 +203,13 @@ public class ContactsFragment extends Fragment{
         };
 
         Collections.sort(contactsArray,comparator);
+        ContactsClass dummyClass = new ContactsClass();
+        String dummyImgName = "drawable://"+ R.drawable.dummy_img;
+
+
+        dummyClass.friendPictureUrl = dummyImgName;
+        Log.e("Img Uri",dummyClass.friendPictureUrl+"");
+        contactsArray.add(0,dummyClass);
 
     }
 

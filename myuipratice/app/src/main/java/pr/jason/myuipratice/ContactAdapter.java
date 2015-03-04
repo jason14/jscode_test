@@ -79,11 +79,11 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
             params.height = (int)mRowHeight;
         }
         viewHolder.linearLayout.setGravity(Gravity.CENTER_VERTICAL);
-        viewHolder.textView.setTextAppearance(mContext,R.style.myListRowText);
+        viewHolder.textView.setTextAppearance(mContext,R.style.myContactsListRowText);
         viewHolder.textView.setText(contactsArray.get(position).friendName);
 
         if(contactsArray.get(position).friendPictureUrl != null && !contactsArray.get(position).friendPictureUrl.equals("")) {
-            ImageLoader.getInstance().displayImage(contactsArray.get(position).friendPictureUrl.toString(), viewHolder.imageView, options, animateFirstListener);
+            ImageLoader.getInstance().displayImage(contactsArray.get(position).friendPictureUrl, viewHolder.imageView, options, animateFirstListener);
         }else{
 
         }
@@ -105,11 +105,11 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
                 if (i == 0) {
                     // For numeric section
                     for (int k = 0; k <= 9; k++) {
-                        if (StringMatcher.match(String.valueOf(contactsArray.get(j).friendName.charAt(0)), String.valueOf(k)))
+                        if (contactsArray.get(j).friendName!=null&&StringMatcher.match(String.valueOf(contactsArray.get(j).friendName.charAt(0)), String.valueOf(k)))
                             return j;
                     }
                 } else {
-                    if (StringMatcher.match(String.valueOf(contactsArray.get(j).friendName.charAt(0)), String.valueOf(mSections.charAt(i))))
+                    if (contactsArray.get(j).friendName!=null&&StringMatcher.match(String.valueOf(contactsArray.get(j).friendName.charAt(0)), String.valueOf(mSections.charAt(i))))
                         return j;
                 }
             }

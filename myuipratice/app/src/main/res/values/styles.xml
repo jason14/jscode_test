@@ -18,9 +18,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="myListRowText">
+    <style name="myContactsListRowText">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/colorDarkText</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="mySearchEditText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/colorLightText</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/primary_material_dark</item>
+    </style>
+    <style name="myDialListRowText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorLightText</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 

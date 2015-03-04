@@ -203,7 +203,7 @@ public class RecentFragment extends Fragment {
                 }
 
             }
-            callsArray.get(i).friendPictureUrl = imageUrl;
+            callsArray.get(i).friendPictureUrl = imageUrl.toString();
         }
         return callsArray;
     }

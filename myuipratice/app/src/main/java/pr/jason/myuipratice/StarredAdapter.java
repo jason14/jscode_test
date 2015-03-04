@@ -38,7 +38,7 @@ public class StarredAdapter extends RecyclerView.Adapter<StarredViewHolder>{
         final String name = contactsArray.get(i).friendName;
         starredViewHolder.textView.setText(name);
         if(contactsArray.get(i).friendPictureUrl != null && !contactsArray.get(i).friendPictureUrl.equals("")) {
-            ImageLoader.getInstance().displayImage(contactsArray.get(i).friendPictureUrl.toString(), starredViewHolder.imageView, options, animateFirstListener);
+            ImageLoader.getInstance().displayImage(contactsArray.get(i).friendPictureUrl, starredViewHolder.imageView, options, animateFirstListener);
         }else{
 
         }

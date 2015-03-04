@@ -56,7 +56,7 @@ public class StarredFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.favorite_fragment,container,false);
         ArrayList<ContactsClass> contactsArray = new ArrayList<ContactsClass>();
-        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList(true);
+        contactsArray = MainActivity.getPhoneBooKList(true,getActivity().getApplicationContext());
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         gridLayoutManager = new GridLayoutManager(getActivity(),2);

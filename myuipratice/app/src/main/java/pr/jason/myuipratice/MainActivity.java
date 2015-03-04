@@ -45,7 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import pr.jason.myuipratice.util.DisplayConfig;
-import pr.jason.myuipratice.util.MyLog;
+import pr.jason.myuipratice.util.ResoursesManager;
 import pr.jason.myuipratice.widget.CustomViewPager;
 
 
@@ -93,12 +93,11 @@ public class MainActivity extends ActionBarActivity {
         }
         initImageLoader(this);
         initUpDownScroll();
-        //Display dis = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
         DisplayConfig displayConfig = new DisplayConfig(mContext,MainActivity.this);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         mDisWidth = displayConfig.getDisplayWidth();
         mDisHeight = displayConfig.getDisplayHeight();
-        float fabMarginRight = getResources().getDimension(R.dimen.item_margin);
+        float fabMarginRight = ResoursesManager.getDimensionResource("item_margin",mContext);
         fabTransWidth = mDisWidth/2 - (fabMarginRight + displayConfig.convertDpToPixel(24,mContext));
         maxScrollY = mDisHeight/2;
         minSlideDownStartY = mDisHeight/16;
@@ -108,14 +107,14 @@ public class MainActivity extends ActionBarActivity {
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setDividerColor(getResources().getColor(R.color.colorTransparent));
-        mSlidingTabLayout.setIndicatorColor(getResources().getColor(R.color.colorControlHighlight));
-        mSlidingTabLayout.setTextColorResource(R.color.colorLightText);
+        mSlidingTabLayout.setDividerColor(ResoursesManager.getColorResource("colorTransparent",mContext));
+        mSlidingTabLayout.setIndicatorColor(ResoursesManager.getColorResource("colorControlHighlight",mContext));
+        mSlidingTabLayout.setTextColor(ResoursesManager.getColorResource("colorLightText",mContext));
         mSlidingTabLayout.setUnderlineHeight(0);
         mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //isOnfocusScrollView = false;
+
             }
 
             @Override
@@ -125,7 +124,6 @@ public class MainActivity extends ActionBarActivity {
                     AnimatorSet set = new AnimatorSet();
                     set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(fab, "translationX", 0, fabTransWidth));
                     set.setDuration(300).start();
-                    // Log.e("Trans Width value", "최근 또는 연락처 trans value: " + fabTransWidth);
                 } else if (prePage != 0 && position == 0) {
 
                     AnimatorSet set = new AnimatorSet();
@@ -152,7 +150,6 @@ public class MainActivity extends ActionBarActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Dial Fragment","Dial 프래그먼트 시작");
                 DialFragment dialFragment = DialFragment.newInstance("Dial");
                 transaction = getSupportFragmentManager().beginTransaction();
 
@@ -232,7 +229,6 @@ public class MainActivity extends ActionBarActivity {
                                 } else {
                                     if(startY<downY) {
                                         mViewPager.setPagingDisabled();
-                                       // ViewHelper.setTranslationY(main_layout, newY);
                                         isOnfocusScrollView = true;
                                     }
                                 }
@@ -245,7 +241,6 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e("UP", "velocity: " + velocity);
                 final float main_layoutDelta = (float)Math.abs(deltaY)/(maxScrollY);
                 int duration = (int)(main_layoutDelta*100);
                 velocity = Math.abs(velocity);
@@ -324,8 +319,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void slideUpMainLayout(float startY, float curY, int duration){
-        MyLog.LogMessage("MOVE", "startY 362 " + startY);
-        MyLog.LogMessage("MOVE", "downY 363 " + downY);
+
         if(startY<downY) {
             AnimatorSet set = new AnimatorSet();
             set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(main_layout, "translationY", curY, 0));
@@ -399,7 +393,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-    public ArrayList<ContactsClass> getPhoneBooKList(boolean isStarredList){
+    public static ArrayList<ContactsClass> getPhoneBooKList(boolean isStarredList,Context context){
 
         ArrayList<ContactsClass> contactsArray = new ArrayList<ContactsClass>();
         ContactsClass contactsClass = new ContactsClass();
@@ -408,7 +402,8 @@ public class MainActivity extends ActionBarActivity {
         String disName = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
         String number = ContactsContract.CommonDataKinds.Phone.NUMBER;
         String disStarred = ContactsContract.CommonDataKinds.Phone.STARRED;
-        Cursor cursor = getContentResolver().query(contactsUri, new String[]{disId,disName,number,disStarred},null,null,null);
+        String phone_type_key = ContactsContract.CommonDataKinds.Phone.TYPE;
+        Cursor cursor = context.getContentResolver().query(contactsUri, new String[]{disId,disName,number,disStarred,phone_type_key},null,null,null);
 
         int i = 0;
         if(cursor != null){
@@ -419,19 +414,19 @@ public class MainActivity extends ActionBarActivity {
                 String name = cursor.getString(1);
                 String phone = cursor.getString(2);
                 int starred = Integer.parseInt(cursor.getString(3));
-
+                int phone_type = Integer.parseInt(cursor.getString(4));
                 contactsClass = new ContactsClass();
 
                 contactsClass.friendId = id;
                 contactsClass.friendName = name;
                 contactsClass.friendNum = phone;
                 contactsClass.friendStarred = starred;
+                contactsClass.phone_type = phone_type;
 
-
-                ContentResolver contentResolver = getContentResolver();
+                ContentResolver contentResolver = context.getContentResolver();
                 Uri imageUrl = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
 
-                contactsClass.friendPictureUrl = imageUrl;
+                contactsClass.friendPictureUrl = imageUrl.toString();
                 if(isStarredList) {
                     if (contactsClass.friendStarred == 1) {
                         contactsArray.add(contactsClass);
@@ -445,6 +440,53 @@ public class MainActivity extends ActionBarActivity {
             cursor.close();
         }
         return contactsArray;
+    }
+
+    public static String getPhoneType(Context context,int phone_type){
+        String phoneType = "";
+        Log.e("폰타입",""+phone_type);
+        switch(phone_type){
+            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                phoneType = ResoursesManager.getStringResource("phone_type_home",context);
+                Log.e("폰타입","TYPE_HOME "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                phoneType = ResoursesManager.getStringResource("phone_type_work",context);
+                Log.e("폰타입","TYPE_WORK "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                phoneType = ResoursesManager.getStringResource("phone_type_mobile",context);
+                Log.e("폰타입","TYPE_MOBILE "+phoneType);
+
+                break;
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
+                phoneType = ResoursesManager.getStringResource("phone_type_main",context);
+                Log.e("폰타입","TYPE_MAIN "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
+                phoneType = ResoursesManager.getStringResource("phone_type_fax_work",context);
+                Log.e("폰타입","TYPE_FAX_WORK "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
+                phoneType = ResoursesManager.getStringResource("phone_type_fax_home",context);
+                Log.e("폰타입","TYPE_FAX_HOME "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
+                phoneType = ResoursesManager.getStringResource("phone_type_isdn",context);
+                Log.e("폰타입","TYPE_ISDN "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                phoneType = ResoursesManager.getStringResource("phone_type_other",context);
+                Log.e("폰타입","TYPE_OTHER "+phoneType);
+                break;
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM:
+                phoneType = ResoursesManager.getStringResource("phone_type_custom",context);
+                Log.e("폰타입","TYPE_CUSTOM "+phoneType);
+                break;
+
+        }
+        return phoneType;
     }
 
 

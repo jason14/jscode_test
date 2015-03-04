@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Adapter;
 import android.widget.ListView;
@@ -85,8 +86,10 @@ public class IndexScroller {
                 canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
                 canvas.drawText(mSections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1
                         , previewRect.top + mPreviewPadding - previewTextPaint.ascent() + 1, previewTextPaint);
-            }
+                Log.e("IndexScroller", "(mListViewHeight - previewSize) / 2 = " + (mListViewHeight - previewSize) / 2);
+                Log.e("IndexScroller", "(mListViewHeight - previewSize) / 2 + previewSize = " + (mListViewHeight - previewSize) / 2 + previewSize);
 
+            }
             Paint indexPaint = new Paint();
             indexPaint.setColor(Color.WHITE);
             indexPaint.setAlpha((int) (255 * mAlphaRate));
@@ -100,6 +103,10 @@ public class IndexScroller {
                 canvas.drawText(mSections[i], mIndexbarRect.left + paddingLeft
                         , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
             }
+
+            Log.e("IndexScroller", "sectionHeight = " + sectionHeight);
+            Log.e("IndexScroller", "mIndexbarRect.height() = " + mIndexbarRect.height());
+
         }
     }
 
@@ -142,12 +149,14 @@ public class IndexScroller {
     }
 
     public void onSizeChanged(int w, int h, int oldw, int oldh) {
+        asdf
         mListViewWidth = w;
         mListViewHeight = h;
         mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth
                 , mIndexbarMargin
                 , w - mIndexbarMargin
                 , h - mIndexbarMargin);
+
     }
 
     public void show() {

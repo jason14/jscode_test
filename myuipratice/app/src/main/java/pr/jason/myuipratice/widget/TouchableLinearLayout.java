@@ -2,7 +2,6 @@ package pr.jason.myuipratice.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -24,11 +23,13 @@ public class TouchableLinearLayout extends LinearLayout{
 
     private float mStartX;
     private float mDownX;
+    private float mDownY;
     private float mUpX;
     private float mEndX;
     private float mMoveX;
     private float mWidth;
     private int mDX;
+    private int mDY;
     private static float TOLERANCE;
     private Context mContext;
     private int mStartXposition;
@@ -63,9 +64,7 @@ public class TouchableLinearLayout extends LinearLayout{
                     break;
                 }
                 setCurPosition(this.getX());
-                Log.e("DIAL", "Dial layout X: " + this.getX());
-                Log.e("DIAL", "Down layout X: " + event.getX());
-                Log.e("DIAL", "Dial layout width: " + this.getWidth());
+                mDownY = event.getY();
                 mDownX = event.getX();
                 mStartX = this.getX();
                 mWidth = this.getWidth();
@@ -77,40 +76,35 @@ public class TouchableLinearLayout extends LinearLayout{
             case MotionEvent.ACTION_UP:
                 if (DialFragment.isOnPositionChanged == false) {
                     mDX = (int) (event.getX() - mDownX);
-                    Log.e("Slide", "mStartXposition " + mStartXposition);
-                    Log.e("Slide", "curPosition " + curPosition);
-                    if (Math.abs(mDX) > TOLERANCE && curPosition == LEFT) {
+                    mDY = (int)(event.getY() - mDownY);
+                    if (Math.abs(mDY)<Math.abs(mDX) && Math.abs(mDX) > TOLERANCE && curPosition == LEFT) {
                         DialFragment.isOnPositionChanged = true;
                         if (mDX > 0) {
 
                             slideRightForward();
-                            Log.e("isOnPositionChanged Ani", "RightForward");
                             preferenceManager.put("DIAL_POSITION", 1);
 
                         } else {
                             slideRightBackward();
-                            Log.e("isOnPositionChanged Ani", "slideRightBackward");
                             preferenceManager.put("DIAL_POSITION", 1);
                         }
 
-                    } else if (Math.abs(mDX) > TOLERANCE && curPosition != LEFT) {
+                    } else if (Math.abs(mDY)<Math.abs(mDX) &&Math.abs(mDX) > TOLERANCE && curPosition != LEFT) {
                         DialFragment.isOnPositionChanged = true;
                         if (mDX > 0) {
                             slideLeftBackward();
                             preferenceManager.put("DIAL_POSITION", 0);
-                            Log.e("isOnPositionChanged Ani", "slideLeftBackward");
 
                         } else {
                             slideLeftForward();
                             preferenceManager.put("DIAL_POSITION", 0);
-                            Log.e("isOnPositionChanged Ani", "slideLeftForward");
 
                         }
 
                     }
                     break;
                 }
-            }
+        }
         return super.dispatchTouchEvent(event);
     }
     public void setCurPosition(float curPosition){
@@ -271,7 +265,6 @@ public class TouchableLinearLayout extends LinearLayout{
 
     public void slideAniStart(AnimatorSet thisViewStartSet,AnimatorSet thisViewEndSet, AnimatorSet sideViewStartSet, AnimatorSet sideViewEndSet){
 
-        Log.e("Slide isOnPositionChanged start","linear " +  DialFragment.isOnPositionChanged);
         AnimatorSet start = new AnimatorSet();
         AnimatorSet end = new AnimatorSet();
         start.playTogether(thisViewStartSet,sideViewStartSet);
@@ -297,7 +290,6 @@ public class TouchableLinearLayout extends LinearLayout{
             @Override
             public void onAnimationEnd(Animator animation) {
                 DialFragment.isOnPositionChanged = false;
-                Log.e("Slide isOnPositionChanged end","linear " +  DialFragment.isOnPositionChanged);
 
             }
 
@@ -314,9 +306,8 @@ public class TouchableLinearLayout extends LinearLayout{
     }
 
     public void slideRightForward() {
-            slideAniStart(rightForwardStart(this,mSideView,true),rightForwardEnd(this,mSideView,true),
-                    leftBackwardStart(mSideView, this,false),leftBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightForward() ");
+        slideAniStart(rightForwardStart(this,mSideView,true),rightForwardEnd(this,mSideView,true),
+                leftBackwardStart(mSideView, this,false),leftBackwardEnd(mSideView, this,false));
 
     }
 
@@ -325,20 +316,17 @@ public class TouchableLinearLayout extends LinearLayout{
     public void slideRightBackward(){
         slideAniStart(rightBackwardStart(this, mSideView,true),rightBackwardEnd(this, mSideView,true),
                 leftForwardStart(mSideView, this,false),leftForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideRightBackward() ");
     }
 
     public void slideLeftForward(){
         slideAniStart(leftForwardStart(this, mSideView,true),leftForwardEnd(this, mSideView,true),
                 rightBackwardStart(mSideView, this,false),rightBackwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftForward() ");
 
     }
 
     public void slideLeftBackward(){
         slideAniStart(leftBackwardStart(this,mSideView,true),leftBackwardEnd(this,mSideView,true),
                 rightForwardStart(mSideView, this,false),rightForwardEnd(mSideView, this,false));
-        Log.e("Slide","slideLeftBackward() ");
 
     }
 
@@ -346,7 +334,7 @@ public class TouchableLinearLayout extends LinearLayout{
 
     public void setInit(Context context,int startXposition,View sideView,PreferenceManager preferenceManager){
         mContext = context;
-        TOLERANCE = DisplayConfig.convertDpToPixel(30,mContext);
+        TOLERANCE = DisplayConfig.convertDpToPixel(80,mContext);
         mStartXposition = startXposition;
         mSideView = sideView;
         this.preferenceManager = preferenceManager;

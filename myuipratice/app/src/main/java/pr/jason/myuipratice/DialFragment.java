@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 
 import pr.jason.myuipratice.util.DisplayConfig;
 import pr.jason.myuipratice.util.KeyPadText;
-import pr.jason.myuipratice.util.MyLog;
 import pr.jason.myuipratice.util.PreferenceManager;
 import pr.jason.myuipratice.util.Utils;
 import pr.jason.myuipratice.widget.TouchableLinearLayout;
@@ -76,6 +74,7 @@ public class DialFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity().getApplicationContext();
 
         initUiResource();
         getContactsInfo();
@@ -100,7 +99,6 @@ public class DialFragment extends Fragment{
         contact_search_et = (EditText)view.findViewById(R.id.contact_search_et);
         contact_search_et.setInputType(0);
         contact_search_et.addTextChangedListener(mTextWatcher);
-        mContext = getActivity().getApplicationContext();
 
         RelativeLayout.LayoutParams content_layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int)content_height);
         content_layout.setLayoutParams(content_layoutParams);
@@ -136,25 +134,16 @@ public class DialFragment extends Fragment{
             @Override
             public void onGlobalLayout() {
                 if(result_list.getChildAt(0)!=null){
-                    Log.e("onGlobalLayout","onGlobalLayout height " + result_list.getChildAt(0).getHeight());
-                    listRowHeight = result_list.getChildAt(0).getHeight();
-
+                    listRowHeight = result_list.getChildAt(0).getHeight()-10; //listview alpha value adjust point
                 }else{
-                    Log.e("onGlobalLayout In","onGlobalLayout  In"  );
+
                 }
             }
         });
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        super.onActivityCreated(savedInstanceState);
-        //listRowHeight = result_list.getChildAt(0).getHeight();
-        //listRowHeight = 256;
-        Log.e("Fade","onActivityCreated listRowHeight: "+listRowHeight);
-    }
 
     public void getFadeOutView(ListView v, float rowHeight,int firstVisibleItem, int visibleItemCount){
         int firstWantedPosition = firstVisibleItem;
@@ -162,55 +151,39 @@ public class DialFragment extends Fragment{
         int firstPosition = v.getFirstVisiblePosition() - v.getHeaderViewsCount(); // This is the same as child #0
         int wantedChild = wantedPosition - firstPosition;
         int firstWantedChild = firstWantedPosition - firstPosition;
-// Say, first visible position is 8, you want position 10, wantedChild will now be 2
-// So that means your view is child #2 in the ViewGroup:
+
         if (wantedChild < 0 || wantedChild >= v.getChildCount()) {
-            //Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
+            ViewHelper.setAlpha(v.getChildAt(firstWantedChild),0f);
             return;
         }
         if (firstWantedChild < 0 || firstWantedChild >= v.getChildCount()) {
-            //Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
             return;
         }
-// Could also check if wantedPosition is between listView.getFirstVisiblePosition() and listView.getLastVisiblePosition() instead.
+
         View wantedView = v.getChildAt(wantedChild);
         View firstWantedView = v.getChildAt(firstWantedChild);
-        Log.e("Fade", "onScroll firstVisibleItem " + firstVisibleItem);
-        Log.e("Fade", "onScroll wantedChild " + wantedChild);
 
         int visibleCount =v.getLastVisiblePosition() - v.getFirstVisiblePosition();
-        Log.e("Fade", "onScroll visibleCount " + visibleCount);
-        Log.e("Fade", "onScroll getLastVisiblePosition " + v.getLastVisiblePosition());
-        Log.e("Fade", "onScroll getFirstVisiblePosition " + v.getFirstVisiblePosition());
+
 
         for(int i = 0; i < visibleCount+1; i++){
             if(i==wantedChild){
                 if(wantedView.getY() < listRowHeight){
-                   // wantedView.setVisibility(View.INVISIBLE);
-                    Log.e("Fade", "onScroll getY " + wantedView.getY());
-                    float alphaRate = (wantedView.getY())/listRowHeight;
+                    float alphaRate = 0f;
+                    float forHalfTransparentValue = (listRowHeight - (2*(listRowHeight-wantedView.getY())))/listRowHeight;
+                    alphaRate = ((wantedView.getY())/listRowHeight)*forHalfTransparentValue;
                     ViewHelper.setAlpha(wantedView,alphaRate);
-                    Log.e("Fade", "onScroll firstVisibleItem " + firstVisibleItem);
-                    Log.e("Fade", "onScroll alphaRate" + alphaRate);
 
-                    //wantedView.invalidate();
                 }else{
-                    Log.e("Fade", "onScroll firstVisibleItem VISIBLE" + firstVisibleItem);
                     ViewHelper.setAlpha(wantedView,1.0f);
                 }
             }else if(firstWantedChild==i){
                 ViewHelper.setAlpha(v.getChildAt(i),0f);
             }
             else{
-                //v.getChildAt(i).setVisibility(View.VISIBLE);
-                Log.e("Fade", "onScroll i VISIBLE" + i);
                 ViewHelper.setAlpha(v.getChildAt(i),1.0f);
             }
         }
-
-
-
-
     }
 
     private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
@@ -241,7 +214,7 @@ public class DialFragment extends Fragment{
 
     private void getContactsInfo(){
         contactsArray = new ArrayList<ContactsClass>();
-        contactsArray = ((MainActivity)MainActivity.mContext).getPhoneBooKList(false);
+        contactsArray = MainActivity.getPhoneBooKList(false, getActivity().getApplicationContext());
     }
 
     private void setDialBtns(View v){
@@ -334,7 +307,6 @@ public class DialFragment extends Fragment{
             inputNum += id;
             inputNum = PhoneNumberUtils.formatNumber(inputNum);
             contact_search_et.setText(inputNum);
-            MyLog.LogMessage("클릭 버튼",""+inputNum);
         }
     };
 
