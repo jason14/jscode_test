@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
@@ -42,8 +44,16 @@ public class ContactsFragment extends Fragment{
     private boolean isListViewScrollTop = true;
     IndexableListView listView;
     private ArrayList<ContactsClass> resultsArray;
+    private RelativeLayout searchBar;
     private EditText searchEditText;
-    float searchEditTextHeight;
+    private ImageView searchIconImg;
+    float searchBarHeight;
+    private static final int SCROLL_STOP = 0;
+    private static  final int SCROLL_UP = 2;
+    private static final int SCROLL_DOWN = 1;
+    private boolean isVisibleSearchView = true;
+    private boolean isOnAnimation = false;
+    private boolean isDoneInitListView =false;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -76,21 +86,29 @@ public class ContactsFragment extends Fragment{
         listView.setAdapter(contactAdapter);
         listView.setFastScrollEnabled(true);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            int lastFirstVisibleItem;
+
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                int scrolly = getScrollY();
 
-                if(scrolly==0&&scrollState == 0){
+                int scrolly = getFirstChildViewScrollY();
+
+                if(view.getFirstVisiblePosition() == 0&&scrolly==0&&scrollState == 0){
                     isListViewScrollTop = true;
                 }else{
                     isListViewScrollTop = false;
+
                 }
 
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+                int scrollDirection = getScrollDirection(firstVisibleItem,lastFirstVisibleItem);
+                if(!isOnAnimation) {
+                    startSearchBarAni(scrollDirection);
+                }
+                lastFirstVisibleItem = firstVisibleItem;
             }
         });
 
@@ -118,21 +136,24 @@ public class ContactsFragment extends Fragment{
             }
         });
 
-        searchEditTextHeight = 0f;
+        searchBarHeight = 0f;
         ViewTreeObserver vto = listView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 if(listView.getChildAt(0)!=null){
-                    searchEditTextHeight = listView.getChildAt(0).getHeight();
-                    RelativeLayout.LayoutParams searchLP =  new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)searchEditTextHeight);
-                    searchEditText.setLayoutParams(searchLP);
-                    listView.setCustomTopMargin((int)searchEditTextHeight);
+                    if(!isDoneInitListView) {
+                        searchBarHeight = listView.getChildAt(0).getHeight();
+                        RelativeLayout.LayoutParams searchLP = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) searchBarHeight);
+                        searchBar.setLayoutParams(searchLP);
+                        listView.setCustomTopMargin((int) searchBarHeight);
+                        isDoneInitListView = true;
+                    }
                 }
             }
         });
         searchEditText = (EditText)view.findViewById(R.id.search_et);
-
+        searchBar = (RelativeLayout)view.findViewById(R.id.search_bar_layout);
         return view;
     }
 
@@ -145,8 +166,11 @@ public class ContactsFragment extends Fragment{
     @Override
     public void onResume() {
         checkScrollPostion();
+        isDoneInitListView = false;
         super.onResume();
     }
+
+
 
     private boolean isDragDown(MotionEvent event){
         boolean result = false;
@@ -165,19 +189,104 @@ public class ContactsFragment extends Fragment{
         return result;
     }
 
+    ObjectAnimator searchViewAnim;
+    private void startSearchBarAni(int scrollDirection){
+        switch(scrollDirection){
+            case SCROLL_UP:
+                if(!isVisibleSearchView){
+                    listView.setIsVisibleSearchEt(true);
+                    isOnAnimation = true;
+                    searchViewAnim = ObjectAnimator.ofFloat(searchBar,"translationY",-searchBarHeight,0);
+                    searchViewAnim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
+                        }
 
-    private void checkScrollPostion(){
-        int scrolly = getScrollY();
-        Log.e("onResume scroll 위치",""+scrolly);
-        if(scrolly==0){
-            isListViewScrollTop = true;
-        }else {
-            isListViewScrollTop = false;
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            isVisibleSearchView = true;
+                            isOnAnimation = false;
+                            Log.e("Draw","SCROLL_UP ani end");
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    searchViewAnim.setDuration(200);
+                    searchViewAnim.start();
+
+                }
+                break;
+            case SCROLL_DOWN:
+                if(isVisibleSearchView){
+                    isOnAnimation = true;
+                    listView.setIsVisibleSearchEt(false);
+                    searchViewAnim = ObjectAnimator.ofFloat(searchBar,"translationY",0,-searchBarHeight);
+                    searchViewAnim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            isVisibleSearchView = false;
+                            isOnAnimation = false;
+                            //listView.setCustomTopMargin(0);
+                            Log.e("Draw","SCROLL_DOWN ani end");
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    searchViewAnim.setDuration(300);
+                    searchViewAnim.start();
+
+                }
+                break;
         }
     }
 
-    private int getScrollY(){
+    private int getScrollDirection(int firstVisibleItem, int lastFirstViisbleItem){
+
+        if(lastFirstViisbleItem > firstVisibleItem){
+            return SCROLL_UP;
+        }else if(lastFirstViisbleItem < firstVisibleItem){
+            return SCROLL_DOWN;
+        }else{
+            return SCROLL_STOP;
+        }
+    }
+
+    private void checkScrollPostion(){
+        int scrolly = getFirstChildViewScrollY();
+        if(listView !=null) {
+            if (listView.getFirstVisiblePosition() == 0 && scrolly < 5) {
+                isListViewScrollTop = true;
+            } else {
+                isListViewScrollTop = false;
+            }
+        }
+    }
+
+    private int getFirstChildViewScrollY(){
         int scrolly = 0;
         View c = listView.getChildAt(0);
         try {
@@ -203,11 +312,11 @@ public class ContactsFragment extends Fragment{
             }
         };
 
-        Collections.sort(contactsArray,comparator);
+        Collections.sort(contactsArray, comparator);
         ContactsClass dummyClass = new ContactsClass();
         String dummyImgName = "drawable://"+ R.drawable.dummy_img;
 
-
+        dummyClass.friendName = "0";
         dummyClass.friendPictureUrl = dummyImgName;
         Log.e("Img Uri",dummyClass.friendPictureUrl+"");
         contactsArray.add(0,dummyClass);

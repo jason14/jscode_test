@@ -80,8 +80,11 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
         }
         viewHolder.linearLayout.setGravity(Gravity.CENTER_VERTICAL);
         viewHolder.textView.setTextAppearance(mContext,R.style.myContactsListRowText);
-        viewHolder.textView.setText(contactsArray.get(position).friendName);
-
+        if(position != 0) {
+            viewHolder.textView.setText(contactsArray.get(position).friendName);
+        }else{
+            viewHolder.textView.setText("");
+        }
         if(contactsArray.get(position).friendPictureUrl != null && !contactsArray.get(position).friendPictureUrl.equals("")) {
             ImageLoader.getInstance().displayImage(contactsArray.get(position).friendPictureUrl, viewHolder.imageView, options, animateFirstListener);
         }else{

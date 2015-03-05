@@ -79,9 +79,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mContext = this;
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_launcher)
-                .showImageForEmptyUri(R.drawable.ic_launcher)
-                .showImageOnFail(R.drawable.ic_launcher)
+                .showImageOnLoading(R.drawable.ic_face_grey600_48dp)
+                .showImageForEmptyUri(R.drawable.ic_face_grey600_48dp)
+                .showImageOnFail(R.drawable.ic_face_grey600_48dp)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)

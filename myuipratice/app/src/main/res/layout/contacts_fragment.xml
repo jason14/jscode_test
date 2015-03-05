@@ -10,11 +10,60 @@
         android:id="@+id/listview"
         android:dividerHeight="0dp"
         android:divider="@null"
-       />
-    <EditText
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:id="@+id/search_et"
-        style="@style/mySearchEditText"
         />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/search_bar_layout"
+        android:gravity="center_vertical"
+        style="@style/mySearchEditText"
+        >
+
+        <EditText
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/search_et"
+            android:paddingLeft="56dp"
+            android:background="#00ffffff"
+            android:hint="@string/search"
+            android:textColor="#ffffff"
+            android:textColorHint="#aaaaaa"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:adjustViewBounds="true"
+            android:id="@+id/search_bar_img"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_search_white_48dp"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:adjustViewBounds="true"
+            android:id="@+id/search_bar_group_img"
+            android:src="@drawable/ic_group_white_48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:adjustViewBounds="true"
+            android:id="@+id/search_bar_add_img"
+            android:src="@drawable/ic_add_white_48dp"
+            android:layout_toLeftOf="@+id/search_bar_group_img"
+            android:layout_centerVertical="true"
+
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#99666666"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 </RelativeLayout>

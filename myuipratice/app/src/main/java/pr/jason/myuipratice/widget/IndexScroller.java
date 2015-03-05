@@ -8,7 +8,6 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Adapter;
 import android.widget.ListView;
@@ -34,6 +33,7 @@ public class IndexScroller {
     private SectionIndexer mIndexer = null;
     private String[] mSections = null;
     private RectF mIndexbarRect;
+    private boolean isVisibleSearchEt;
 
     private static final int STATE_HIDDEN = 0;
     private static final int STATE_SHOWING = 1;
@@ -86,8 +86,7 @@ public class IndexScroller {
                 canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
                 canvas.drawText(mSections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1
                         , previewRect.top + mPreviewPadding - previewTextPaint.ascent() + 1, previewTextPaint);
-                Log.e("IndexScroller", "(mListViewHeight - previewSize) / 2 = " + (mListViewHeight - previewSize) / 2);
-                Log.e("IndexScroller", "(mListViewHeight - previewSize) / 2 + previewSize = " + (mListViewHeight - previewSize) / 2 + previewSize);
+
 
             }
             Paint indexPaint = new Paint();
@@ -104,8 +103,6 @@ public class IndexScroller {
                         , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
             }
 
-            Log.e("IndexScroller", "sectionHeight = " + sectionHeight);
-            Log.e("IndexScroller", "mIndexbarRect.height() = " + mIndexbarRect.height());
 
         }
     }
@@ -121,7 +118,18 @@ public class IndexScroller {
                     mIsIndexing = true;
                     // Determine which section the point is in, and move the list to that section
                     mCurrentSection = getSectionByPoint(ev.getY());
-                    mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                    //mListView.setSmoothScrollbarEnabled();
+                    if(isVisibleSearchEt){
+                        mListView.smoothScrollBy(0,0);
+                        mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection)-1);
+                        //mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection)-1);
+
+                    }else {
+                        mListView.smoothScrollBy(0,0);
+                        mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                       // mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection));
+
+                    }
                     return true;
                 }
                 break;
@@ -131,7 +139,17 @@ public class IndexScroller {
                     if (contains(ev.getX(), ev.getY())) {
                         // Determine which section the point is in, and move the list to that section
                         mCurrentSection = getSectionByPoint(ev.getY());
-                        mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                        //mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                        if(isVisibleSearchEt){
+                            mListView.smoothScrollBy(0,0);
+                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection)-1);
+
+                        }else {
+                            mListView.smoothScrollBy(0,0);
+                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+
+
+                        }
                     }
                     return true;
                 }
@@ -262,4 +280,8 @@ public class IndexScroller {
         }
 
     };
+
+    public void setIsVisibleSearchEt(boolean value){
+        isVisibleSearchEt = value;
+    }
 }

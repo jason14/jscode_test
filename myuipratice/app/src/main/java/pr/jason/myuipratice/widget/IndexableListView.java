@@ -3,6 +3,7 @@ package pr.jason.myuipratice.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ListAdapter;
@@ -43,18 +44,22 @@ public class IndexableListView extends ListView {
         } else {
             if (mScroller != null) {
                 mScroller.hide();
+                Log.e("Draw","setFastScrollEnabled mScroller.hide()" );
+
                 mScroller = null;
             }
         }
     }
-
+    private Canvas mCanvas;
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
         // Overlay index bar
-        if (mScroller != null)
+        if (mScroller != null) {
             mScroller.draw(canvas);
+            mCanvas = canvas;
+        }
     }
 
     @Override
@@ -72,6 +77,8 @@ public class IndexableListView extends ListView {
                     // If fling happens, index bar shows
                     if (mScroller != null)
                         mScroller.show();
+                    Log.e("Draw","mGestureDetector mScroller.show()" );
+
                     return super.onFling(e1, e2, velocityX, velocityY);
                 }
 
@@ -104,9 +111,28 @@ public class IndexableListView extends ListView {
     int tmp_oldh;
     public void setCustomTopMargin(int topMargin){
         customTopMargin = topMargin;
-        if (mScroller != null)
+        if (mScroller != null) {
+            mScroller.hide();
             mScroller.onSizeChanged(tmp_w, tmp_h, customTopMargin, tmp_oldh);
+            mScroller.draw(mCanvas);
+            mScroller.show();
+
+            Log.e("Draw","onSizeChanged: " + customTopMargin);
+        }
     }
 
+    public void setIsVisibleSearchEt(boolean value){
+        if(mScroller != null){
+            mScroller.setIsVisibleSearchEt(value);
+        }
+    }
+
+    public IndexScroller getmScroller(){
+        IndexScroller scroller = null;
+        if(mScroller != null) {
+            scroller = mScroller;
+        }
+        return scroller;
+    }
 
 }

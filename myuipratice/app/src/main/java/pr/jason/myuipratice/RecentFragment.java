@@ -63,7 +63,7 @@ public class RecentFragment extends Fragment {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 int scrolly = getScrollY();
 
-                if(scrolly==0&&scrollState == 0){
+                if(view.getFirstVisiblePosition()==0&&scrolly==0&&scrollState == 0){
                     isListViewScrollTop = true;
                 }else{
                     isListViewScrollTop = false;
@@ -127,18 +127,19 @@ public class RecentFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.e("onResume ",""+"resume");
+        super.onResume();
         checkScrollPostion();
-    super.onResume();
-}
+    }
 
     private void checkScrollPostion(){
         int scrolly = getScrollY();
         Log.e("onResume scroll 위치",""+scrolly);
-        if(scrolly==0){
-            isListViewScrollTop = true;
-        }else {
-            isListViewScrollTop = false;
+        if(listView !=null) {
+            if (listView.getFirstVisiblePosition() == 0 && scrolly == 0) {
+                isListViewScrollTop = true;
+            } else {
+                isListViewScrollTop = false;
+            }
         }
     }
 
@@ -147,7 +148,7 @@ public class RecentFragment extends Fragment {
         View c = listView.getChildAt(0);
         try {
             scrolly = -c.getTop() + listView.getFirstVisiblePosition() * c.getHeight();
-           return scrolly;
+            return scrolly;
         }catch(NullPointerException e){
             Log.e("listView.getFirstVisiblePosition()", ""+ e);
             return 0;
@@ -212,7 +213,7 @@ public class RecentFragment extends Fragment {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor cursor = null;
         try {
-             cursor =
+            cursor =
                     contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID+ "="+ contactId+ " AND "+ ContactsContract.Data.MIMETYPE+"='"+ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE+ "'", null, null);
 
             if (cursor != null) {

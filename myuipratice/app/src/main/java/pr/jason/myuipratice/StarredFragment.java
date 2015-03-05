@@ -42,9 +42,9 @@ public class StarredFragment extends Fragment{
         page= getArguments().getInt("somePage",0);
         title = getArguments().getString("someTitle");
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_launcher)
-                .showImageForEmptyUri(R.drawable.ic_launcher)
-                .showImageOnFail(R.drawable.ic_launcher)
+                .showImageOnLoading(R.drawable.ic_face_grey600_48dp)
+                .showImageForEmptyUri(R.drawable.ic_face_grey600_48dp)
+                .showImageOnFail(R.drawable.ic_face_grey600_48dp)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -66,7 +66,7 @@ public class StarredFragment extends Fragment{
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                 scrolly = getScrollY();
+                scrolly = getScrollY();
                 super.onScrolled(recyclerView, dx, dy);
             }
 
@@ -74,7 +74,7 @@ public class StarredFragment extends Fragment{
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
 
-                if(scrolly==0&&newState == 0){
+                if(gridLayoutManager.findFirstVisibleItemPosition() == 0 &&scrolly==0&&newState == 0){
                     isListViewScrollTop = true;
                 }else{
                     isListViewScrollTop = false;
@@ -115,6 +115,24 @@ public class StarredFragment extends Fragment{
             Log.e("listView.getFirstVisiblePosition()", "" + e);
             return 0;
         }
+    }
+
+    private void checkScrollPostion(){
+        int scrolly = getScrollY();
+        Log.e("onResume scroll 위치",""+scrolly);
+        if(recyclerView !=null) {
+            if (gridLayoutManager.findFirstVisibleItemPosition() == 0 && scrolly == 0) {
+                isListViewScrollTop = true;
+            } else {
+                isListViewScrollTop = false;
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkScrollPostion();
     }
 
     private boolean isDragDown(MotionEvent event){

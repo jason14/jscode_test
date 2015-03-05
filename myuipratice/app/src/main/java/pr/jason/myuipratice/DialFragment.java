@@ -133,12 +133,16 @@ public class DialFragment extends Fragment{
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+
                 if(result_list.getChildAt(0)!=null){
                     listRowHeight = result_list.getChildAt(0).getHeight()-10; //listview alpha value adjust point
                 }else{
 
                 }
             }
+
+
+
         });
         return view;
     }

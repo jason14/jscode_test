@@ -19,5 +19,6 @@
     <string name="phone_type_isdn">호출기</string>
     <string name="phone_type_other">기타</string>
     <string name="phone_type_custom"></string>
+    <string name="search">검색</string>
 
 </resources>

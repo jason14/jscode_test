@@ -129,7 +129,7 @@ public class RecentAdapter extends BaseAdapter{
 
 
         }else{
-            peoplePhotoUri = "drawable://"+R.drawable.ic_launcher;
+            peoplePhotoUri = "drawable://"+R.drawable.ic_face_grey600_48dp;
         }
 
         ImageLoader.getInstance().displayImage(peoplePhotoUri, viewHolder.picture_iv, options, animateFirstListener);
