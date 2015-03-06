@@ -19,8 +19,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import pr.jason.myuipratice.util.MyLog;
-
 /**
  * Created by Jaesin on 2015-02-05.
  */
@@ -61,20 +59,17 @@ public class RecentFragment extends Fragment {
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                int scrolly = getScrollY();
-
-                if(view.getFirstVisiblePosition()==0&&scrolly==0&&scrollState == 0){
-                    isListViewScrollTop = true;
-                }else{
-                    isListViewScrollTop = false;
-                }
 
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
+                int scrolly = getFirstChildViewScrollY();
+                if(view.getFirstVisiblePosition() == 0&&scrolly==0){
+                    isListViewScrollTop = true;
+                }else{
+                    isListViewScrollTop = false;
+                }
             }
         });
 
@@ -84,16 +79,12 @@ public class RecentFragment extends Fragment {
 
                 if(MainActivity.isOnfocusScrollView){
                     MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
-                    MyLog.LogMessage("MOVE setOnTouchListener",MainActivity.isOnfocusScrollView+" RecentFragment isOnfocusScrollView");
                     listView.smoothScrollToPosition(0);
                     listView.invalidate();
                 }else{
-                    MyLog.LogMessage("MOVE isListViewScrollTop",isListViewScrollTop+" isListViewScrollTop");
 
                     if(isListViewScrollTop){
                         if(isDragDown(event)){
-                            MyLog.LogMessage("UP 터치",MainActivity.isOnfocusScrollView+"");
-
                             MainActivity.isOnReadyScrollView = true;
                             MainActivity.main_layout.requestDisallowInterceptTouchEvent(true);
                         }
@@ -132,10 +123,10 @@ public class RecentFragment extends Fragment {
     }
 
     private void checkScrollPostion(){
-        int scrolly = getScrollY();
+        int scrolly = getFirstChildViewScrollY();
         Log.e("onResume scroll 위치",""+scrolly);
         if(listView !=null) {
-            if (listView.getFirstVisiblePosition() == 0 && scrolly == 0) {
+            if (listView.getFirstVisiblePosition() == 0 && scrolly < 5) {
                 isListViewScrollTop = true;
             } else {
                 isListViewScrollTop = false;
@@ -143,7 +134,7 @@ public class RecentFragment extends Fragment {
         }
     }
 
-    private int getScrollY(){
+    private int getFirstChildViewScrollY(){
         int scrolly = 0;
         View c = listView.getChildAt(0);
         try {
@@ -249,7 +240,5 @@ public class RecentFragment extends Fragment {
         cursor.close();
         return contactId;
     }
-
-
 
 }

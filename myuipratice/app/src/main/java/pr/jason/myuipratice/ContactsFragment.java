@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,6 +30,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import pr.jason.myuipratice.util.SoundSearcher;
 import pr.jason.myuipratice.widget.IndexableListView;
 
 /**
@@ -54,6 +57,7 @@ public class ContactsFragment extends Fragment{
     private boolean isVisibleSearchView = true;
     private boolean isOnAnimation = false;
     private boolean isDoneInitListView =false;
+    private ContactAdapter contactAdapter;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -76,34 +80,35 @@ public class ContactsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment,container,false);
-        //연락처 목록 받기
-        contactsArray = new ArrayList<ContactsClass>();
-        resultsArray = new ArrayList<ContactsClass>();
-        contactsArray = MainActivity.getPhoneBooKList(false,getActivity().getApplicationContext());
-        setSortArrayList();
         listView = (IndexableListView)view.findViewById(R.id.listview);
-        ContactAdapter contactAdapter = new ContactAdapter(context,R.layout.contacts_row,contactsArray, MainActivity.options);
-        listView.setAdapter(contactAdapter);
+
+        //연락처 목록 받기
+        if(resultsArray == null){
+            contactsArray = new ArrayList<ContactsClass>();
+            resultsArray = new ArrayList<ContactsClass>();
+            contactsArray = MainActivity.getPhoneBooKList(false,getActivity().getApplicationContext());
+            setSortArrayList();
+            resultsArray = (ArrayList<ContactsClass>)contactsArray.clone();
+            contactAdapter = new ContactAdapter(context,R.layout.contacts_row,resultsArray, MainActivity.options);
+            listView.setAdapter(contactAdapter);
+        }
         listView.setFastScrollEnabled(true);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             int lastFirstVisibleItem;
-
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                int scrolly = getFirstChildViewScrollY();
-
-                if(view.getFirstVisiblePosition() == 0&&scrolly==0&&scrollState == 0){
-                    isListViewScrollTop = true;
-                }else{
-                    isListViewScrollTop = false;
-
-                }
 
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int scrolly = getFirstChildViewScrollY();
+                if(view.getFirstVisiblePosition() == 0&&scrolly==0){
+                    isListViewScrollTop = true;
+                }else{
+                    isListViewScrollTop = false;
+                }
+
                 int scrollDirection = getScrollDirection(firstVisibleItem,lastFirstVisibleItem);
                 if(!isOnAnimation) {
                     startSearchBarAni(scrollDirection);
@@ -112,7 +117,6 @@ public class ContactsFragment extends Fragment{
             }
         });
 
-        //listView.scrollerSizeChange(50,0,40,1500);
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -153,9 +157,55 @@ public class ContactsFragment extends Fragment{
             }
         });
         searchEditText = (EditText)view.findViewById(R.id.search_et);
+        searchEditText.addTextChangedListener(textWatcher);
         searchBar = (RelativeLayout)view.findViewById(R.id.search_bar_layout);
         return view;
     }
+
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            Log.e("onTextChanged","s: " + s.toString() );
+            Log.e("onTextChanged","contactsArray.size(): " +contactsArray.size() );
+
+            if(s.length()==0){
+                resultsArray.clear();
+                resultsArray = (ArrayList<ContactsClass>)contactsArray.clone();
+                contactAdapter = new ContactAdapter(context,R.layout.contacts_row,resultsArray, MainActivity.options);
+                listView.setAdapter(contactAdapter);
+                contactAdapter.notifyDataSetChanged();
+            }else{
+                resultsArray.clear();
+                for(int i = 1; i < contactsArray.size(); i++){
+                    String name = contactsArray.get(i).friendName;
+                    String keyWord = s.toString();
+                    boolean isRight = SoundSearcher.matchString(name,keyWord);
+                    Log.e("onTextChanged","isRight name: " + name + " , keyword: " + keyWord);
+                    if(isRight){
+                        resultsArray.add(contactsArray.get(i));
+                    }
+                }
+                ContactsClass dummyClass = new ContactsClass();
+                String dummyImgName = "drawable://"+ R.drawable.dummy_img;
+                dummyClass.friendName = "0";
+                dummyClass.friendPictureUrl = dummyImgName;
+                resultsArray.add(0,dummyClass);
+                contactAdapter = new ContactAdapter(context,R.layout.contacts_row,resultsArray, MainActivity.options);
+                listView.setAdapter(contactAdapter);
+                contactAdapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     public ArrayList<ContactsClass> getResultsArray(String keyworkd){
         resultsArray.clear();
@@ -167,6 +217,7 @@ public class ContactsFragment extends Fragment{
     public void onResume() {
         checkScrollPostion();
         isDoneInitListView = false;
+
         super.onResume();
     }
 

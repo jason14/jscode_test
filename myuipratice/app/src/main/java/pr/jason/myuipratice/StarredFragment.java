@@ -66,15 +66,18 @@ public class StarredFragment extends Fragment{
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrolly = getScrollY();
+
                 super.onScrolled(recyclerView, dx, dy);
+
             }
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                scrolly = getScrollY();
+                Log.e("StarredFragment", " gridLayoutManager.findFirstVisibleItemPosition() " + gridLayoutManager.findFirstVisibleItemPosition());
+                Log.e("StarredFragment", " scrolly " + scrolly);
 
-
-                if(gridLayoutManager.findFirstVisibleItemPosition() == 0 &&scrolly==0&&newState == 0){
+                if(gridLayoutManager.findFirstVisibleItemPosition() == 0 &&scrolly<=0){
                     isListViewScrollTop = true;
                 }else{
                     isListViewScrollTop = false;
@@ -82,6 +85,8 @@ public class StarredFragment extends Fragment{
                 if(MainActivity.isOnfocusScrollView == true){
                     recyclerView.scrollToPosition(0);
                 }
+
+
             }
         });
 

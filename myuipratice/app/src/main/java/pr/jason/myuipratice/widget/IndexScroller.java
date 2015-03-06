@@ -121,7 +121,11 @@ public class IndexScroller {
                     //mListView.setSmoothScrollbarEnabled();
                     if(isVisibleSearchEt){
                         mListView.smoothScrollBy(0,0);
-                        mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection)-1);
+                        if(mIndexer.getPositionForSection(mCurrentSection)-1<0){
+                            mListView.setSelection(0);
+                        }else {
+                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection) - 1);
+                        }
                         //mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection)-1);
 
                     }else {
@@ -142,8 +146,11 @@ public class IndexScroller {
                         //mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
                         if(isVisibleSearchEt){
                             mListView.smoothScrollBy(0,0);
-                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection)-1);
-
+                            if(mIndexer.getPositionForSection(mCurrentSection)-1<0){
+                                mListView.setSelection(0);
+                            }else {
+                                mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection) - 1);
+                            }
                         }else {
                             mListView.smoothScrollBy(0,0);
                             mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));

@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,7 +21,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.Animation;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -58,7 +59,6 @@ public class MainActivity extends ActionBarActivity {
     public static DisplayImageOptions options;
     public static float fabTransWidth;
     FloatingActionButton fab;
-    Animation ani;
     public static int prePage = 0;
     public static boolean onDial = false;
     android.support.v4.app.FragmentTransaction transaction;
@@ -73,6 +73,9 @@ public class MainActivity extends ActionBarActivity {
     private VelocityTracker mVelocityTracker;
     private int MAX_UP_DOWN_DURATION = 300;
     public static boolean isOnReadyScrollView = false;
+    private ImageButton settingButton;
+    public static int PREFERENCE_SETTING = 1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,10 +163,17 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        LinearLayout hide_layout = (LinearLayout)findViewById(R.id.hide_layout);
-        RelativeLayout.LayoutParams hide_layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)mDisHeight);
+        RelativeLayout hide_layout = (RelativeLayout)findViewById(R.id.hide_layout);
+        RelativeLayout.LayoutParams hide_layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)maxScrollY);
         hide_layout.setLayoutParams(hide_layoutParams);
-
+        settingButton = (ImageButton)findViewById(R.id.app_setting);
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivityForResult(intent, PREFERENCE_SETTING);
+            }
+        });
 
 
     }
@@ -220,6 +230,7 @@ public class MainActivity extends ActionBarActivity {
                     if(Math.abs(velocity) > mMinimumVelocity){
                         break;
                     }
+                    Log.e("Main Scroll Down", "isOnReadyScrollView " + isOnReadyScrollView);
 
                     if((main_layout.getY() >= 0) && (isOnPageViewScroll ==false)) {
                         if (isOnReadyScrollView == true) {

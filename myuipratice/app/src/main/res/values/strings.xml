@@ -20,5 +20,6 @@
     <string name="phone_type_other">기타</string>
     <string name="phone_type_custom"></string>
     <string name="search">검색</string>
+    <string name="setting_bg">배경화면</string>
 
 </resources>
