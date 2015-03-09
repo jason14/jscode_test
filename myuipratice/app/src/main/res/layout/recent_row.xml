@@ -3,13 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-
     android:orientation="horizontal"
     >
     <RelativeLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
-
         android:layout_gravity="center"
         android:layout_marginLeft="4dp">
         <ImageView
@@ -41,22 +39,22 @@
                 android:id="@+id/number_tv"
                 android:textColor="#777777"
                 />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-           >
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:id="@+id/type_iv"/>
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/date_tv"
-                />
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:id="@+id/type_iv"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date_tv"
+                    />
             </LinearLayout>
-            </LinearLayout>
+        </LinearLayout>
         <TextView
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"

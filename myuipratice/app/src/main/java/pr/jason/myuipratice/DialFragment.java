@@ -63,6 +63,7 @@ public class DialFragment extends Fragment{
     private Context mContext;
     public static boolean isOnPositionChanged = false;
     public static float listRowHeight;
+
     public static DialFragment newInstance(String title){
         DialFragment dialFragment = new DialFragment();
         Bundle args = new Bundle();

@@ -1,5 +1,6 @@
 package pr.jason.myuipratice;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -7,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -21,9 +24,10 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -46,7 +50,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import pr.jason.myuipratice.util.DisplayConfig;
+import pr.jason.myuipratice.util.PreferenceManager;
 import pr.jason.myuipratice.util.ResoursesManager;
+import pr.jason.myuipratice.util.SettingInfo;
 import pr.jason.myuipratice.widget.CustomViewPager;
 
 
@@ -57,6 +63,8 @@ public class MainActivity extends ActionBarActivity {
     private FragmentManager fm;
     public static Context mContext;
     public static DisplayImageOptions options;
+    public static DisplayImageOptions optionsBg;
+
     public static float fabTransWidth;
     FloatingActionButton fab;
     public static int prePage = 0;
@@ -64,8 +72,9 @@ public class MainActivity extends ActionBarActivity {
     android.support.v4.app.FragmentTransaction transaction;
     public static float mDisWidth;
     public static float mDisHeight;
+    public static float mStatusBarHeight;
     public static boolean isOnfocusScrollView = false;
-    public static LinearLayout main_layout;
+    public static RelativeLayout main_layout;
     private float  maxScrollY = 0;
     private float minScrollY = 20f;
     private float minSlideDownStartY;
@@ -75,12 +84,17 @@ public class MainActivity extends ActionBarActivity {
     public static boolean isOnReadyScrollView = false;
     private ImageButton settingButton;
     public static int PREFERENCE_SETTING = 1000;
-
+    private ImageView app_bg_img;
+    private PreferenceManager preferenceManager;
+    private static final int LOW_DPI_STATUS_BAR_HEIGHT = 19;
+    private static final int MEDIUM_DPI_STATUS_BAR_HEIGHT = 25;
+    private static final int HIGH_DPI_STATUS_BAR_HEIGHT = 38;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        preferenceManager = new PreferenceManager(mContext);
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_face_grey600_48dp)
                 .showImageForEmptyUri(R.drawable.ic_face_grey600_48dp)
@@ -91,22 +105,26 @@ public class MainActivity extends ActionBarActivity {
                 .displayer(new RoundedBitmapDisplayer(1000))
                 .build();
 
+        optionsBg = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.dummy_img)
+                .showImageForEmptyUri(R.drawable.dummy_img)
+                .showImageOnFail(R.drawable.dummy_img)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .build();
+
         if(savedInstanceState == null){
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
         }
         initImageLoader(this);
         initUpDownScroll();
-        DisplayConfig displayConfig = new DisplayConfig(mContext,MainActivity.this);
-        fab = (FloatingActionButton)findViewById(R.id.fab);
-        mDisWidth = displayConfig.getDisplayWidth();
-        mDisHeight = displayConfig.getDisplayHeight();
-        float fabMarginRight = ResoursesManager.getDimensionResource("item_margin",mContext);
-        fabTransWidth = mDisWidth/2 - (fabMarginRight + displayConfig.convertDpToPixel(24,mContext));
-        maxScrollY = mDisHeight/2;
-        minSlideDownStartY = mDisHeight/16;
+        main_layout = (RelativeLayout)findViewById(R.id.main_layout);
+
+        displayConfig();
 
         fm = this.getSupportFragmentManager();
-        main_layout = (LinearLayout)findViewById(R.id.main_layout);
+        main_layout = (RelativeLayout)findViewById(R.id.main_layout);
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
@@ -149,7 +167,15 @@ public class MainActivity extends ActionBarActivity {
         });
 
         mSlidingTabLayout.setViewPager(mViewPager);
-
+        app_bg_img = (ImageView)findViewById(R.id.app_bg_img);
+        String appBgUri = preferenceManager.getValue(SettingInfo.APP_BACKGROUND_IMAGE,null);
+        Log.e("App Bg Uri", appBgUri + "  ");
+        if(appBgUri!=null) {
+            //appBgUri = "file://"+appBgUri;
+            ImageLoader.getInstance().displayImage(appBgUri, app_bg_img, optionsBg);
+        }else{
+            app_bg_img.setBackgroundColor(Color.parseColor("#aa00dd"));
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -455,45 +481,35 @@ public class MainActivity extends ActionBarActivity {
 
     public static String getPhoneType(Context context,int phone_type){
         String phoneType = "";
-        Log.e("폰타입",""+phone_type);
         switch(phone_type){
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
                 phoneType = ResoursesManager.getStringResource("phone_type_home",context);
-                Log.e("폰타입","TYPE_HOME "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
                 phoneType = ResoursesManager.getStringResource("phone_type_work",context);
-                Log.e("폰타입","TYPE_WORK "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
                 phoneType = ResoursesManager.getStringResource("phone_type_mobile",context);
-                Log.e("폰타입","TYPE_MOBILE "+phoneType);
 
                 break;
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
                 phoneType = ResoursesManager.getStringResource("phone_type_main",context);
-                Log.e("폰타입","TYPE_MAIN "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
                 phoneType = ResoursesManager.getStringResource("phone_type_fax_work",context);
-                Log.e("폰타입","TYPE_FAX_WORK "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
                 phoneType = ResoursesManager.getStringResource("phone_type_fax_home",context);
-                Log.e("폰타입","TYPE_FAX_HOME "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
                 phoneType = ResoursesManager.getStringResource("phone_type_isdn",context);
-                Log.e("폰타입","TYPE_ISDN "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
                 phoneType = ResoursesManager.getStringResource("phone_type_other",context);
-                Log.e("폰타입","TYPE_OTHER "+phoneType);
                 break;
             case ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM:
                 phoneType = ResoursesManager.getStringResource("phone_type_custom",context);
-                Log.e("폰타입","TYPE_CUSTOM "+phoneType);
                 break;
 
         }
@@ -518,4 +534,53 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
+
+    public void displayConfig(){
+        DisplayConfig displayConfig = new DisplayConfig(mContext,MainActivity.this);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        mDisWidth = displayConfig.getDisplayWidth();
+        mDisHeight = displayConfig.getDisplayHeight();
+        float fabMarginRight = ResoursesManager.getDimensionResource("item_margin",mContext);
+        fabTransWidth = mDisWidth/2 - (fabMarginRight + displayConfig.convertDpToPixel(24,mContext));
+        maxScrollY = mDisHeight/2;
+        minSlideDownStartY = mDisHeight/16;
+        main_layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Activity activity = MainActivity.this;
+                Rect rectangle = new Rect();
+                Window window = activity.getWindow();
+                window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+                int statusBarTop = rectangle.top;
+                int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+                mStatusBarHeight = Math.abs(statusBarTop - contentViewTop);
+                Log.e("mDisplayStatusBarHeight",""+ mStatusBarHeight);
+            }
+        });
+
+    }
+
+   /* // onCreate()에서 StatusBar 구하는 메서드 ( Density 이용 )
+    private void getStatusBarSizeOnCreate(){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getMetrics(displayMetrics);
+
+        int statusBarHeight;
+
+        switch (displayMetrics.densityDpi) {
+            case DisplayMetrics.DENSITY_HIGH:
+                mStatusBarHeight = HIGH_DPI_STATUS_BAR_HEIGHT;
+                break;
+            case DisplayMetrics.DENSITY_MEDIUM:
+                mStatusBarHeight = MEDIUM_DPI_STATUS_BAR_HEIGHT;
+                break;
+            case DisplayMetrics.DENSITY_LOW:
+                mStatusBarHeight = LOW_DPI_STATUS_BAR_HEIGHT;
+                break;
+            default:
+                mStatusBarHeight = MEDIUM_DPI_STATUS_BAR_HEIGHT;
+        }
+        Log.i("StatusBarTest" , "onCreate StatusBar Height= " + mStatusBarHeight);
+    }*/
 }

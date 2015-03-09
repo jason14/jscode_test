@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -170,8 +169,7 @@ public class ContactsFragment extends Fragment{
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.e("onTextChanged","s: " + s.toString() );
-            Log.e("onTextChanged","contactsArray.size(): " +contactsArray.size() );
+
 
             if(s.length()==0){
                 resultsArray.clear();
@@ -185,7 +183,6 @@ public class ContactsFragment extends Fragment{
                     String name = contactsArray.get(i).friendName;
                     String keyWord = s.toString();
                     boolean isRight = SoundSearcher.matchString(name,keyWord);
-                    Log.e("onTextChanged","isRight name: " + name + " , keyword: " + keyWord);
                     if(isRight){
                         resultsArray.add(contactsArray.get(i));
                     }
@@ -258,7 +255,6 @@ public class ContactsFragment extends Fragment{
                         public void onAnimationEnd(Animator animation) {
                             isVisibleSearchView = true;
                             isOnAnimation = false;
-                            Log.e("Draw","SCROLL_UP ani end");
 
                         }
 
@@ -293,7 +289,6 @@ public class ContactsFragment extends Fragment{
                             isVisibleSearchView = false;
                             isOnAnimation = false;
                             //listView.setCustomTopMargin(0);
-                            Log.e("Draw","SCROLL_DOWN ani end");
 
                         }
 
@@ -344,7 +339,6 @@ public class ContactsFragment extends Fragment{
             scrolly = -c.getTop() + listView.getFirstVisiblePosition() * c.getHeight();
             return scrolly;
         }catch(NullPointerException e){
-            Log.e("listView.getFirstVisiblePosition()", ""+ e);
             return 0;
         }
     }
@@ -369,7 +363,6 @@ public class ContactsFragment extends Fragment{
 
         dummyClass.friendName = "0";
         dummyClass.friendPictureUrl = dummyImgName;
-        Log.e("Img Uri",dummyClass.friendPictureUrl+"");
         contactsArray.add(0,dummyClass);
 
     }

@@ -12,15 +12,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 import pr.jason.myuipratice.MainActivity;
 
@@ -43,12 +36,17 @@ public class ImageWriteReadManager {
     private boolean cameraFlag = false;
     private int mDisplayWidth;
     private int mDisplayHeight;
+
     private PreferenceManager preferenceManager;
     public ImageWriteReadManager(Activity activity, Context context){
         mContext = context;
         this.activity = activity;
         mDisplayWidth = (int)MainActivity.mDisWidth;
-        mDisplayHeight = (int)MainActivity.mDisHeight;
+        mDisplayHeight = (int)MainActivity.mDisHeight - (int)MainActivity.mStatusBarHeight;
+        Log.e("mDisplayWidth", "mDisplayWidth: " + mDisplayWidth);
+        Log.e("mDisplayHeight", "mDisplayHeight: " + mDisplayHeight);
+        Log.e("mDisplayHeight", "mStatusBarHeight: " + (int)MainActivity.mStatusBarHeight);
+
         File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/division");
         if(!f.isDirectory()) f.mkdir();
         mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse("file://"+Environment.getExternalStorageDirectory())));
@@ -106,17 +104,31 @@ public class ImageWriteReadManager {
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         Log.e("Image Crop","requestCode " + requestCode);
-        activity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.parse("file://"+Environment.getExternalStorageDirectory())));
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent mediaScanIntent = new Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(Environment.getExternalStorageDirectory()); //out is your output file
+            mediaScanIntent.setData(contentUri);
+            mContext.sendBroadcast(mediaScanIntent);
+        } else {
+            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+        }*/
+
+       /* mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.parse("file://"+Environment.getExternalStorageDirectory())));*/
         if(resultCode != activity.RESULT_OK){
-            if(resultCode == activity.RESULT_CANCELED){
-                if(cameraFlag){
-                    if(tempFile.exists()){
+            if(resultCode == activity.RESULT_CANCELED) {
+                if (cameraFlag) {
+                    if (tempFile.exists()) {
                         tempFile.delete();
                     }
                 }
-                return;
             }
+            return;
+        }
+
+
 
             switch(requestCode){
                 case PICK_FROM_GALLERY:
@@ -129,8 +141,7 @@ public class ImageWriteReadManager {
                 case AFTER_CROP:
                     try{
                         Bitmap cropPhoto = BitmapFactory.decodeFile(cropUri.getPath());
-                        /*iv.setImageBitmap(cropPhoto);
-                        iv.setScaleType(ImageView.ScaleType.FIT_XY);*/
+
                     }catch(Exception e){
                         return;
                     }
@@ -140,7 +151,7 @@ public class ImageWriteReadManager {
                     ++name;
                     break;
             }
-        }
+
     }
 
     public void crop(){
@@ -154,7 +165,7 @@ public class ImageWriteReadManager {
         cropIntent.putExtra("outputX", mDisplayWidth);
         cropIntent.putExtra("outputY", mDisplayHeight);
         cropIntent.putExtra("aspectX", mDisplayWidth);
-        cropIntent.putExtra("aspectY", mDisplayHeight / mDisplayWidth);
+        cropIntent.putExtra("aspectY", mDisplayHeight );
         cropIntent.putExtra("scale", true);
         cropIntent.putExtra("noFaceDetection", true);
         cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
@@ -163,29 +174,7 @@ public class ImageWriteReadManager {
                 + "/division","c"+System.currentTimeMillis()+".png"));
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT,cropUri);
         preferenceManager.put(SettingInfo.APP_BACKGROUND_IMAGE,cropUri.toString());
+        Log.e("App Bg Uri", "ImageWriteReadManager " + cropUri.toString());
         activity.startActivityForResult(cropIntent, AFTER_CROP);
     }
-
-    private View.OnClickListener load = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new AlertDialog.Builder(mContext).setIcon(0).setTitle("Choose Image From... ")
-                    .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            getCameraPhoto();
-                        }
-                    }).setNeutralButton("Gallery", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).show();
-        }
-    };
 }

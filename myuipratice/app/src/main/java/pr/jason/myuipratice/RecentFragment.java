@@ -9,7 +9,6 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -124,7 +123,6 @@ public class RecentFragment extends Fragment {
 
     private void checkScrollPostion(){
         int scrolly = getFirstChildViewScrollY();
-        Log.e("onResume scroll 위치",""+scrolly);
         if(listView !=null) {
             if (listView.getFirstVisiblePosition() == 0 && scrolly < 5) {
                 isListViewScrollTop = true;
@@ -141,7 +139,6 @@ public class RecentFragment extends Fragment {
             scrolly = -c.getTop() + listView.getFirstVisiblePosition() * c.getHeight();
             return scrolly;
         }catch(NullPointerException e){
-            Log.e("listView.getFirstVisiblePosition()", ""+ e);
             return 0;
         }
     }
@@ -186,7 +183,6 @@ public class RecentFragment extends Fragment {
         for(int i = 0; i < callsArray.size(); i++){
             Uri imageUrl = null;
             if(callsArray.get(i).cashed_photo_id!=0){
-                Log.e( " Count ", "이미지 있는 count:  "+ i);
                 String number = callsArray.get(i).friendNum;
                 String id = fetchContactIdFromPhoneNumber(number);
 

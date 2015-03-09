@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +81,6 @@ public class RecentAdapter extends BaseAdapter{
             viewHolder.name_tv.setVisibility(View.VISIBLE);
             viewHolder.name_tv.setText(callArrays.get(position).friendName);
             viewHolder.name_tv.setTextAppearance(mContext,R.style.myContactsListRowText);
-        //    Log.e("friendName"," friendName : " + callArrays.get(position).friendName+ " ");
 
         }
 
@@ -120,7 +118,6 @@ public class RecentAdapter extends BaseAdapter{
         String number = callArrays.get(position).friendNum;
         if(callArrays.get(position).cashed_photo_id != 0) {
             String id = fetchContactIdFromPhoneNumber(number);
-            Log.e("id", "아이디 " + id);
             if (id != null && !id.equals("")) {
                 peoplePhotoUri = getPhotoUri(Long.parseLong(id)).toString();
             }
