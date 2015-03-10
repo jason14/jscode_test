@@ -104,10 +104,13 @@ public class ProfileDialogFragment extends DialogFragment{
                 Log.e("Dialog show","show");
                 AnimatorSet set = new AnimatorSet();
                 set.playTogether(
+                        ObjectAnimator.ofFloat(v, "pivotY", 1),
+                        ObjectAnimator.ofFloat(v, "pivotX", 1),
+
                         ObjectAnimator.ofFloat(v, "scaleX", 0, 1),
                         ObjectAnimator.ofFloat(v, "scaleY", 0, 1),
                         ObjectAnimator.ofFloat(v, "alpha", 0, 1));
-                AnimatorProxy.wrap(v).setPivotY(pointY/MainActivity.mDisHeight);
+
                 Log.e("Dialog","pointY/MainActivity.mDisHeight: " + pointY/MainActivity.mDisHeight);
 
                 set.setDuration(300);
@@ -116,6 +119,8 @@ public class ProfileDialogFragment extends DialogFragment{
                     public void onAnimationStart(Animator animation) {
                         v.setVisibility(View.VISIBLE);
                         Log.e("Dialog","onAnimationStart");
+                        Log.e("Dialog","onAnimationStart pointY/MainActivity.mDisHeight: " + pointY/MainActivity.mDisHeight);
+
                     }
 
                     @Override
