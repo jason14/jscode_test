@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -95,6 +96,17 @@ public class RecentFragment extends Fragment {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                float pointY = view.getY();
+                ProfileDialogFragment profileDialogFragment = ProfileDialogFragment.newInstance(0,pointY);
+               // profileDialogFragment.onCreateAnimation(getActivity().getFragmentManager(),true,0);
+
+                profileDialogFragment.show(getFragmentManager().beginTransaction(),"dialog");
+            }
+        });
+
         return view;
     }
 
@@ -123,7 +135,7 @@ public class RecentFragment extends Fragment {
 
     private void checkScrollPostion(){
         int scrolly = getFirstChildViewScrollY();
-        if(listView !=null) {
+        if(listView !=null)  {
             if (listView.getFirstVisiblePosition() == 0 && scrolly < 5) {
                 isListViewScrollTop = true;
             } else {
