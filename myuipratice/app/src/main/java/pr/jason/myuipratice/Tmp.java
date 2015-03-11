@@ -1,3 +1,34 @@
+/*
+package pr.jason.myuipratice;
+
+*/
+/**
+ * Created by Jaesin on 2015-03-11.
+ *//*
+
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+
 package pr.jason.myuipratice;
 
 import android.app.Dialog;
@@ -22,10 +53,12 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+*/
 /**
  * Created by Jaesin on 2015-03-09.
- */
-public class ProfileDialogFragment extends DialogFragment{
+ *//*
+
+public class ProfileDialogFragment extends DialogFragment {
     private static final String LIST_X_KEY = "POINT_X";
     private static final String LIST_Y_KEY = "POINT_Y";
     private static final String LIST_HEIGHT_KEY = "LIST_HEIGHT";
@@ -41,7 +74,7 @@ public class ProfileDialogFragment extends DialogFragment{
     private ImageView profile_photo_img;
     private View v;
     private RelativeLayout profile_photo_layout;
-    private LinearLayout profile_btn_layout;
+    private RelativeLayout profile_btn_layout;
     private float listHeight;
     private float listPhotoHeight;
     public static ProfileDialogFragment newInstance(float listX, float listY, float listHeight, float photoX, float photoY, float listPhotoHeight){
@@ -82,7 +115,7 @@ public class ProfileDialogFragment extends DialogFragment{
         listY = getArguments().getFloat(LIST_Y_KEY,0f);
         photoX = getArguments().getFloat(PHOTO_X_KEY,0f);
         photoY = getArguments().getFloat(PHOTO_Y_KEY,0f) + listY;
-        Log.e("Dialog","photoX " + photoX);
+        Log.e("Dialog", "photoX " + photoX);
         Log.e("Dialog","photoY " + photoY);
         dialogY = (MainActivity.mDisHeight/10)-listY;
         dialogPhotoPositionY = (int)((MainActivity.mDisHeight)/10) + photo_layout_height/2 - photo_img_size/2;
@@ -90,7 +123,7 @@ public class ProfileDialogFragment extends DialogFragment{
         profile_photo_bg_img = (ImageView)v.findViewById(R.id.profile_photo_bg_img);
         profile_photo_img = (ImageView)v.findViewById(R.id.profile_photo_img);
         profile_photo_layout = (RelativeLayout)v.findViewById(R.id.profile_photo_layout);
-        profile_btn_layout = (LinearLayout)v.findViewById(R.id.profile_btn_layout);
+        profile_btn_layout = (RelativeLayout)v.findViewById(R.id.profile_btn_layout);
 
         LinearLayout.LayoutParams profile_photo_params = new LinearLayout.LayoutParams(dialogWidth,photo_layout_height);
         profile_photo_layout.setLayoutParams(profile_photo_params);
@@ -99,6 +132,9 @@ public class ProfileDialogFragment extends DialogFragment{
         RelativeLayout.LayoutParams profile_photo_img_params = new RelativeLayout.LayoutParams(photo_img_size,photo_img_size);
         profile_photo_img_params.addRule(RelativeLayout.CENTER_IN_PARENT);
         profile_photo_img.setLayoutParams(profile_photo_img_params);
+        RelativeLayout.LayoutParams profile_photo_bg_img_params = new RelativeLayout.LayoutParams(dialogWidth,photo_layout_height);
+        profile_photo_img_params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        profile_photo_bg_img.setLayoutParams(profile_photo_bg_img_params);
         v.setVisibility(View.GONE);
         return v;
     }
@@ -140,17 +176,18 @@ public class ProfileDialogFragment extends DialogFragment{
                 v.setPivotX(MainActivity.mDisWidth / 2);
 
                 AnimatorSet set = new AnimatorSet();
-                ObjectAnimator alphaAni = ObjectAnimator.ofFloat(v, "alpha", 0, 0.5f);
+                ObjectAnimator alphaAni = ObjectAnimator.ofFloat(v, "alpha", 0, 1);
                 alphaAni.setDuration(4000);
                 set.playTogether(
-                        ObjectAnimator.ofFloat(profile_photo_img, "translationX", -(MainActivity.mDisWidth/2) + photoX ,1),
-                       /* ObjectAnimator.ofFloat(profile_photo_img, "translationY", -(dialogPhotoPositionY - photoY) ,1),*/
-                        ObjectAnimator.ofFloat(v, "scaleX", 10/9,1),
-                        ObjectAnimator.ofFloat(v, "scaleY", listHeight/dialogHeight * 2, 1),
-                        ObjectAnimator.ofFloat(profile_photo_img, "scaleX", listHeight/dialogHeight * 2 * 10 / 9, 1),
-                        ObjectAnimator.ofFloat(v, "translationY", listY ,MainActivity.mDisHeight/20),
-                        // ObjectAnimator.ofFloat(profile_photo_img, "scaleY", listPhotoHeight/photo_img_size, 1),
-                        alphaAni);
+                        ObjectAnimator.ofFloat(profile_photo_img, "translationX", -MainActivity.mDisWidth/2 + photoX , 0),
+                        ObjectAnimator.ofFloat(profile_photo_img, "translationY",   - photoY , 0),
+                        ObjectAnimator.ofFloat(profile_photo_bg_img, "scaleX", 10/9,1),
+                        ObjectAnimator.ofFloat(profile_photo_bg_img, "scaleY", listHeight/dialogHeight * 2, 1),
+                        ObjectAnimator.ofFloat(profile_photo_img, "scaleX", listPhotoHeight/photo_img_size , 1),
+                        ObjectAnimator.ofFloat(profile_photo_img, "scaleY", listPhotoHeight/photo_img_size, 1),
+
+                        ObjectAnimator.ofFloat(profile_photo_bg_img, "translationY", listY ,0)
+                );
 
                 set.setDuration(4000);
                 set.addListener(new Animator.AnimatorListener() {
@@ -205,7 +242,7 @@ public class ProfileDialogFragment extends DialogFragment{
         //dialog.dismiss();
 
 
-       // super.dismiss();
+        // super.dismiss();
     }
 
     public void parentDismiss(DialogInterface dialog){
@@ -261,3 +298,4 @@ public class ProfileDialogFragment extends DialogFragment{
 
 
 }
+*/

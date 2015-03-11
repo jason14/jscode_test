@@ -86,9 +86,7 @@ public class MainActivity extends ActionBarActivity {
     public static int PREFERENCE_SETTING = 1000;
     private ImageView app_bg_img;
     private PreferenceManager preferenceManager;
-    private static final int LOW_DPI_STATUS_BAR_HEIGHT = 19;
-    private static final int MEDIUM_DPI_STATUS_BAR_HEIGHT = 25;
-    private static final int HIGH_DPI_STATUS_BAR_HEIGHT = 38;
+ 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

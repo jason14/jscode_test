@@ -19,6 +19,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import pr.jason.myuipratice.util.DisplayConfig;
+
 /**
  * Created by Jaesin on 2015-02-05.
  */
@@ -99,10 +101,12 @@ public class RecentFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                float pointY = view.getY();
-                ProfileDialogFragment profileDialogFragment = ProfileDialogFragment.newInstance(0,pointY);
-               // profileDialogFragment.onCreateAnimation(getActivity().getFragmentManager(),true,0);
-
+                float pointY = view.getY()+ DisplayConfig.convertDpToPixel(48,getActivity().getApplicationContext());
+                float list_height = view.getHeight();
+                float photoY = view.findViewById(R.id.picture_iv).getY();
+                float photoX = view.findViewById(R.id.picture_iv).getX();
+                float photoHeight = view.findViewById(R.id.picture_iv).getHeight();
+                ProfileDialogFragment profileDialogFragment = ProfileDialogFragment.newInstance(0,pointY,list_height, photoX, photoY, photoHeight);
                 profileDialogFragment.show(getFragmentManager().beginTransaction(),"dialog");
             }
         });

@@ -2,18 +2,89 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#aa3312">
+    >
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/profile_photo_layout"
+        android:background="#aa3312"
+        >
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:id="@+id/profile_photo_bg_img"/>
+            android:layout_height="match_parent"
+            android:id="@+id/profile_photo_bg_img"
+            android:background="#33aa11"/>
         <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:id="@+id/profile_photo_img"
-            android:layout_centerInParent="true"/>
-        </RelativeLayout>
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_face_grey600_48dp"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/profile_btn_layout"
+        android:background="#aa3312"
+        android:orientation="vertical"
+        >
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#00ffffff"
+            android:id="@+id/info_btn"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/star_add_btn"
+                android:background="#33000000"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/call_log_btn"
+                android:background="#33000000"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/video_call_btn"
+                android:background="#33000000"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/call_btn"
+                android:background="#33000000"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/text_message_btn"
+                android:background="#33000000"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -58,30 +58,6 @@
         <item name="android:layout_weight">1</item>
 
     </style>
-    <style
-        name="dialog_animation_0" >
-        <item name="android:windowEnterAnimation">@anim/scale_up_ani_0</item>
-        <item name="android:windowExitAnimation">@anim/scale_down_ani_0</item>
-    </style>
-    <style
-        name="dialog_animation_1" >
-        <item name="android:windowEnterAnimation">@anim/scale_up_ani_1</item>
-        <item name="android:windowExitAnimation">@anim/scale_down_ani_1</item>
-    </style>
-    <style
-        name="dialog_animation_2" >
-        <item name="android:windowEnterAnimation">@anim/scale_up_ani_2</item>
-        <item name="android:windowExitAnimation">@anim/scale_down_ani_2</item>
-    </style>
-    <style
-        name="dialog_animation_3" >
-        <item name="android:windowEnterAnimation">@anim/scale_up_ani_3</item>
-        <item name="android:windowExitAnimation">@anim/scale_down_ani_3</item>
-    </style>
-    <style
-        name="dialog_animation_4" >
-        <item name="android:windowEnterAnimation">@anim/scale_up_ani_4</item>
-        <item name="android:windowExitAnimation">@anim/scale_down_ani_4</item>
-    </style>
+
 
 </resources>
