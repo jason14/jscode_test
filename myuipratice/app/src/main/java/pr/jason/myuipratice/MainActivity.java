@@ -126,9 +126,9 @@ public class MainActivity extends ActionBarActivity {
         fm = this.getSupportFragmentManager();
         main_layout = (RelativeLayout)findViewById(R.id.main_layout);
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
+        mViewPager.setAdapter(new MainViewPagerAdpater(fm,4));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.se
+
         mSlidingTabLayout.setDividerColor(ResoursesManager.getColorResource("colorTransparent",mContext));
         mSlidingTabLayout.setIndicatorColor(ResoursesManager.getColorResource("colorControlHighlight",mContext));
         mSlidingTabLayout.setTextColor(ResoursesManager.getColorResource("colorLightText",mContext));
