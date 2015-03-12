@@ -93,6 +93,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mContext = this;
         preferenceManager = new PreferenceManager(mContext);
+        SettingInfo.setCurrentSetting(mContext);
+
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_face_grey600_48dp)
                 .showImageForEmptyUri(R.drawable.ic_face_grey600_48dp)
@@ -126,6 +128,7 @@ public class MainActivity extends ActionBarActivity {
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MainViewPagerAdpater(fm,3));
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.se
         mSlidingTabLayout.setDividerColor(ResoursesManager.getColorResource("colorTransparent",mContext));
         mSlidingTabLayout.setIndicatorColor(ResoursesManager.getColorResource("colorControlHighlight",mContext));
         mSlidingTabLayout.setTextColor(ResoursesManager.getColorResource("colorLightText",mContext));
@@ -166,13 +169,13 @@ public class MainActivity extends ActionBarActivity {
 
         mSlidingTabLayout.setViewPager(mViewPager);
         app_bg_img = (ImageView)findViewById(R.id.app_bg_img);
-        String appBgUri = preferenceManager.getValue(SettingInfo.APP_BACKGROUND_IMAGE,null);
+        String appBgUri = preferenceManager.getValue(SettingInfo.WALLPAPER_URI,null);
         Log.e("App Bg Uri", appBgUri + "  ");
         if(appBgUri!=null) {
             //appBgUri = "file://"+appBgUri;
             ImageLoader.getInstance().displayImage(appBgUri, app_bg_img, optionsBg);
         }else{
-            app_bg_img.setBackgroundColor(Color.parseColor("#aa00dd"));
+            app_bg_img.setBackgroundColor(Color.parseColor("#ffffff"));
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,8 +201,6 @@ public class MainActivity extends ActionBarActivity {
                 startActivityForResult(intent, PREFERENCE_SETTING);
             }
         });
-
-
     }
     private float startY;
     private float downY;
@@ -321,6 +322,15 @@ public class MainActivity extends ActionBarActivity {
                 break;
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    protected void onResume() {
+        if(SettingInfo.WALLPAPER_URI == null){
+            SettingInfo.setCurrentSetting(mContext);
+        }
+        super.onResume();
+
     }
 
     private void slideDownMainLayout(float curY,int duration){

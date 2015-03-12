@@ -106,7 +106,7 @@ public class RecentFragment extends Fragment {
                 float photoY = view.findViewById(R.id.picture_iv).getY();
                 float photoX = view.findViewById(R.id.picture_iv).getX();
                 float photoHeight = view.findViewById(R.id.picture_iv).getHeight();
-                ProfileDialogFragment profileDialogFragment = ProfileDialogFragment.newInstance(0,pointY,list_height, photoX, photoY, photoHeight);
+                ProfileDialogFragment profileDialogFragment = ProfileDialogFragment.newInstance(callsArray.get(position),0,pointY,list_height, photoX, photoY, photoHeight);
                 profileDialogFragment.show(getFragmentManager().beginTransaction(),"dialog");
             }
         });

@@ -104,19 +104,7 @@ public class ImageWriteReadManager {
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         Log.e("Image Crop","requestCode " + requestCode);
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Intent mediaScanIntent = new Intent(
-                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri contentUri = Uri.fromFile(Environment.getExternalStorageDirectory()); //out is your output file
-            mediaScanIntent.setData(contentUri);
-            mContext.sendBroadcast(mediaScanIntent);
-        } else {
-            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
-                    Uri.parse("file://" + Environment.getExternalStorageDirectory())));
-        }*/
 
-       /* mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.parse("file://"+Environment.getExternalStorageDirectory())));*/
         if(resultCode != activity.RESULT_OK){
             if(resultCode == activity.RESULT_CANCELED) {
                 if (cameraFlag) {
@@ -173,7 +161,7 @@ public class ImageWriteReadManager {
         cropUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/division","c"+System.currentTimeMillis()+".png"));
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT,cropUri);
-        preferenceManager.put(SettingInfo.APP_BACKGROUND_IMAGE,cropUri.toString());
+        preferenceManager.put(SettingInfo.WALLPAPER_URI,cropUri.toString());
         Log.e("App Bg Uri", "ImageWriteReadManager " + cropUri.toString());
         activity.startActivityForResult(cropIntent, AFTER_CROP);
     }

@@ -2,10 +2,12 @@ package pr.jason.myuipratice;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by Jaesin on 2015-02-09.
  */
-public class ContactsClass {
+public class ContactsClass implements Serializable {
 
     public long friendId;
     public Bitmap friendPicture;
