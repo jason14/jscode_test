@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\res"><file name="psts_background_tab" path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\res\drawable\psts_background_tab.xml" qualifiers="" type="drawable"/><file name="psts_tab" path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\res\layout\psts_tab.xml" qualifiers="" type="layout"/><file path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\res\values\attrs.xml" qualifiers=""><declare-styleable name="PagerSlidingTabStrip">
+        <attr format="color" name="pstsIndicatorColor"/>
+        <attr format="color" name="pstsUnderlineColor"/>
+        <attr format="color" name="pstsDividerColor"/>
+        <attr format="dimension" name="pstsDividerWidth"/>
+        <attr format="dimension" name="pstsIndicatorHeight"/>
+        <attr format="dimension" name="pstsUnderlineHeight"/>
+        <attr format="dimension" name="pstsDividerPadding"/>
+        <attr format="dimension" name="pstsTabPaddingLeftRight"/>
+        <attr format="dimension" name="pstsScrollOffset"/>
+        <attr format="reference" name="pstsTabBackground"/>
+        <attr format="boolean" name="pstsShouldExpand"/>
+        <attr format="boolean" name="pstsTextAllCaps"/>
+        <attr format="boolean" name="pstsPaddingMiddle"/>
+        <attr format="color" name="pstsTextColorSelected"/>
+        <attr format="integer" name="pstsTextAlpha"/>
+        <attr name="pstsTextStyle">
+            <flag name="normal" value="0x0"/>
+            <flag name="bold" value="0x1"/>
+            <flag name="italic" value="0x2"/>
+        </attr>
+        <attr name="pstsTextSelectedStyle">
+            <flag name="normal" value="0x0"/>
+            <flag name="bold" value="0x1"/>
+            <flag name="italic" value="0x2"/>
+        </attr>
+        <attr format="boolean" name="pstsTabSwitch"/>
+        <attr format="color" name="pstsActivateTextColor"/>
+        <attr format="color" name="pstsDeactivateTextColor"/>
+    </declare-styleable></file><file path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\res\values\colors.xml" qualifiers=""><color name="psts_background_tab_pressed">#1AFFFFFF</color><color name="activate_text_color">#FF666666</color><color name="transparent">#00000000</color><color name="deactivate_text_color">#FFCCCCCC</color></file></source><source path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\build\generated\res\rs\release"/><source path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\build\generated\res\generated\release"/></dataSet><dataSet config="release"><source path="C:\Users\Jaesin\Documents\myuipratice\myuipratice\library\src\release\res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="PagerSlidingTabStrip"><attr format="color" name="pstsIndicatorColor"/><attr format="color" name="pstsUnderlineColor"/><attr format="color" name="pstsDividerColor"/><attr format="dimension" name="pstsDividerWidth"/><attr format="dimension" name="pstsIndicatorHeight"/><attr format="dimension" name="pstsUnderlineHeight"/><attr format="dimension" name="pstsDividerPadding"/><attr format="dimension" name="pstsTabPaddingLeftRight"/><attr format="dimension" name="pstsScrollOffset"/><attr format="reference" name="pstsTabBackground"/><attr format="boolean" name="pstsShouldExpand"/><attr format="boolean" name="pstsTextAllCaps"/><attr format="boolean" name="pstsPaddingMiddle"/><attr format="color" name="pstsTextColorSelected"/><attr format="integer" name="pstsTextAlpha"/><attr name="pstsTextStyle"><flag name="normal" value="0x0"/><flag name="bold" value="0x1"/><flag name="italic" value="0x2"/></attr><attr name="pstsTextSelectedStyle"><flag name="normal" value="0x0"/><flag name="bold" value="0x1"/><flag name="italic" value="0x2"/></attr><attr format="boolean" name="pstsTabSwitch"/><attr format="color" name="pstsActivateTextColor"/><attr format="color" name="pstsDeactivateTextColor"/></declare-styleable></configuration></mergedItems></merger>

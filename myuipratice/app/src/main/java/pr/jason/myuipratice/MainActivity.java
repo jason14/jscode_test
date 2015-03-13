@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     public static int PREFERENCE_SETTING = 1000;
     private ImageView app_bg_img;
     private PreferenceManager preferenceManager;
- 
+    private int currentPosition = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +133,7 @@ public class MainActivity extends ActionBarActivity {
         mSlidingTabLayout.setIndicatorColor(ResoursesManager.getColorResource("colorControlHighlight",mContext));
         mSlidingTabLayout.setTextColor(ResoursesManager.getColorResource("colorLightText",mContext));
         mSlidingTabLayout.setUnderlineHeight(0);
+
         mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -141,11 +142,13 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onPageSelected(int position) {
+
                 if (prePage == 0 && position != 0) {
 
                     AnimatorSet set = new AnimatorSet();
                     set.playTogether(com.nineoldandroids.animation.ObjectAnimator.ofFloat(fab, "translationX", 0, fabTransWidth));
                     set.setDuration(300).start();
+
                 } else if (prePage != 0 && position == 0) {
 
                     AnimatorSet set = new AnimatorSet();
@@ -201,6 +204,7 @@ public class MainActivity extends ActionBarActivity {
                 startActivityForResult(intent, PREFERENCE_SETTING);
             }
         });
+        //currentPosition = mViewPager.getCurrentItem();
     }
     private float startY;
     private float downY;

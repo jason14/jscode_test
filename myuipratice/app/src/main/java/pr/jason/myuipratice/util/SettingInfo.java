@@ -45,6 +45,12 @@ public class SettingInfo {
         mMainColor = preferenceManager.getValue(MAIN_COLOR, Color.parseColor("#ffffff"));
         mCountOfFavorite = preferenceManager.getValue(COUNT_OF_FAVORITE, 0);
         mSizeOfFavorite =  preferenceManager.getValue(SIZE_OF_FAVORITE, 0);
+        mSizeOfKeypad =  preferenceManager.getValue(SIZE_OF_KEYPAD, 0);
+        mKeypadLanguage =  preferenceManager.getValue(KEYPAD_LANGUAGE, 0);
+        mBeepSound =  preferenceManager.getValue(BEEP_SOUND, 0);
+        mIndex =  preferenceManager.getValue(INDEX, 0);
+
+
     }
 
 

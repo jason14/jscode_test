@@ -69,13 +69,13 @@ public class MainViewPagerAdpater extends FragmentPagerAdapter implements PagerS
     @Override
     public int getPageIconResId(int position) {
         if(position == 0){
-            return R.drawable.ic_star_outline_grey600_48dp;
+            return R.drawable.star_tab_36dp;
         }else if(position == 1){
-            return R.drawable.ic_access_time_grey600_48dp;
+            return R.drawable.ic_access_time_grey600_36dp;
         }else if(position == 2){
-            return R.drawable.ic_person_outline_grey600_48dp;
+            return R.drawable.ic_person_outline_grey600_36dp;
         }else{
-            return R.drawable.ic_settings_grey600_48dp;
+            return R.drawable.ic_settings_grey600_36dp;
         }
 
 

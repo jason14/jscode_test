@@ -60,4 +60,14 @@
     </style>
 
 
+    <style name="preferenceTitleStyle">
+       <item name="android:textColor">@android:color/background_light</item>
+        <item name="android:textColorHint">#808080</item>
+        <item name="android:textColorHighlight">#9983CC39</item>
+        <item name="android:textColorLink">#5c5cff</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+
+
 </resources>

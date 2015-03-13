@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,13 +21,13 @@ public class SettingFragment extends Fragment {
     ImageWriteReadManager imageWriteReadManager;
     ListView listView;
     private String[] settingList = {"Main Color"};
+    SettingFragment mSettingFragment;
     public static SettingFragment newInstance(int page,String title){
         SettingFragment settingFragment = new SettingFragment();
         Bundle args = new Bundle();
         args.putInt("somePage",page);
         args.putString("someTitle",title);
         settingFragment.setArguments(args);
-
         return settingFragment;
     }
 
@@ -37,25 +36,46 @@ public class SettingFragment extends Fragment {
         super.onCreate(savedInstanceState);
                 //getActionBar().setTitle("설정");
         mContext = getActivity().getApplicationContext();
-
+        mSettingFragment = this;
     }
+    public static final String MAIN_COLOR = "Main Color";
+    public static final String GENERAL = "General";
+    public static final String THEME = "Theme";
+    public static final String BUTTON = "Button";
+    public static final String Wallpaper = "wallpaper";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.setting_fragment,container,false);
-        listView = (ListView)v.findViewById(R.id.listview);
-        SettingAdapter settingAdapter = new SettingAdapter();
+        View generalHeadView = v.findViewById(R.id.general_head);
+        TextView generalHeadTV =  (TextView)generalHeadView.findViewById(R.id.title);
+        View mainColorChildView = v.findViewById(R.id.main_color_child);
+        TextView mainColorChildTV =  (TextView)mainColorChildView.findViewById(R.id.title);
+        View themeChildView = v.findViewById(R.id.theme_child);
+        TextView themeChildTV =  (TextView)themeChildView.findViewById(R.id.title);
+        View buttonChildView = v.findViewById(R.id.button_child);
+        TextView buttonChildTV =  (TextView)buttonChildView.findViewById(R.id.title);
+        View wallPaperChildView = v.findViewById(R.id.wallpaper_child);
+        TextView wallPaperChildTV =  (TextView)wallPaperChildView.findViewById(R.id.title);
+        //listView = (ListView)v.findViewById(R.id.listview);
+        generalHeadTV.setText(GENERAL);
+        mainColorChildTV.setText(MAIN_COLOR);
+        themeChildTV.setText(THEME);
+        buttonChildTV.setText(BUTTON);
+        wallPaperChildTV.setText(Wallpaper);
+
+        /*SettingAdapter settingAdapter = new SettingAdapter(getActivity().getApplicationContext());
         listView.setAdapter(settingAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch(position){
                     case 0:
-                        imageWriteReadManager = new ImageWriteReadManager(getActivity(),mContext);
+                        imageWriteReadManager = new ImageWriteReadManager(getActivity(),getActivity().getApplicationContext(),mSettingFragment);
                         break;
                 }
             }
-        });
+        });*/
         return v;
     }
 
@@ -71,6 +91,9 @@ public class SettingFragment extends Fragment {
         private Context mContext;
         private ViewHolder viewHolder;
 
+        public SettingAdapter(Context context){
+            inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
 
         class ViewHolder{
 

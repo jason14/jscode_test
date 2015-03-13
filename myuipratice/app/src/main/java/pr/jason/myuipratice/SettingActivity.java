@@ -25,7 +25,7 @@ public class SettingActivity extends PreferenceActivity {
         settingBg.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                imageWriteReadManager = new ImageWriteReadManager(SettingActivity.this,mContext);
+                //imageWriteReadManager = new ImageWriteReadManager(SettingActivity.this,mContext);
                 return false;
             }
         });

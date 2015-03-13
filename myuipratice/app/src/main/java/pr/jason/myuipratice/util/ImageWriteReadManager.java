@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import java.io.File;
@@ -38,7 +39,9 @@ public class ImageWriteReadManager {
     private int mDisplayHeight;
 
     private PreferenceManager preferenceManager;
-    public ImageWriteReadManager(Activity activity, Context context){
+    private Fragment fragment;
+    public ImageWriteReadManager(Activity activity, Context context,Fragment fragment){
+        this.fragment = fragment;
         mContext = context;
         this.activity = activity;
         mDisplayWidth = (int)MainActivity.mDisWidth;
@@ -51,7 +54,7 @@ public class ImageWriteReadManager {
         if(!f.isDirectory()) f.mkdir();
         mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse("file://"+Environment.getExternalStorageDirectory())));
         preferenceManager = new PreferenceManager(mContext);
-        new AlertDialog.Builder(mContext).setIcon(0).setTitle("Choose Image From... ")
+        new AlertDialog.Builder(activity).setIcon(0).setTitle("Choose Image From... ")
                 .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -97,13 +100,13 @@ public class ImageWriteReadManager {
 
         Intent galleryIntent = new Intent("android.intent.action.PICK");
         galleryIntent.setType("vnd.android.cursor.dir/image");
-        activity.startActivityForResult(galleryIntent, PICK_FROM_GALLERY);
-        Log.e("Image Crop","requestCode " + PICK_FROM_GALLERY);
+        fragment.startActivityForResult(galleryIntent, PICK_FROM_GALLERY);
+        Log.e("Image Crop","getGalleryPhoto requestCode " + PICK_FROM_GALLERY);
 
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
-        Log.e("Image Crop","requestCode " + requestCode);
+        Log.e("Image Crop","fragment onActivityResult requestCode " + requestCode);
 
         if(resultCode != activity.RESULT_OK){
             if(resultCode == activity.RESULT_CANCELED) {

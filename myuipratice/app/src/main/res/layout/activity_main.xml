@@ -43,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <com.astuetz.PagerSlidingTabStrip
                     android:id="@+id/sliding_tabs"
                     app:pstsShouldExpand="true"
@@ -52,6 +53,8 @@
                     app:pstsIndicatorColor="@color/colorControlNormal"
                     app:pstsUnderlineColor="@color/colorPrimary"
                     app:pstsTabPaddingLeftRight="14dp"
+                    app:pstsIndicatorHeight="4dp"
+                    app:pstsTabSwitch="true"
                     />
 
                 <pr.jason.myuipratice.widget.CustomViewPager
