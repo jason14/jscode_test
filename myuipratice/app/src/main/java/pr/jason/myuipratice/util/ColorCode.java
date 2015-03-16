@@ -18,7 +18,7 @@ public class ColorCode {
     public static final int LIME=11;
     public static final int YELLOW=12;
     public static final int AMBER=13;
-    public static final  int ORANGE=14;
+    public static final int ORANGE=14;
     public static final int DEEP_ORANGE=15;
     public static final int BROWN=16;
     public static final int GREY=17;

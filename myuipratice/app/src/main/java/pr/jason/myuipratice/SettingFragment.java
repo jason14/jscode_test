@@ -34,7 +34,6 @@ public class SettingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-                //getActionBar().setTitle("설정");
         mContext = getActivity().getApplicationContext();
         mSettingFragment = this;
     }
@@ -42,42 +41,51 @@ public class SettingFragment extends Fragment {
     public static final String GENERAL = "General";
     public static final String THEME = "Theme";
     public static final String BUTTON = "Button";
-    public static final String Wallpaper = "wallpaper";
+    public static final String Wallpaper = "Wallpaper";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.setting_fragment,container,false);
         View generalHeadView = v.findViewById(R.id.general_head);
-        TextView generalHeadTV =  (TextView)generalHeadView.findViewById(R.id.title);
+
+        TextView generalHeadTV =  (TextView)generalHeadView.findViewById(R.id.head_title);
         View mainColorChildView = v.findViewById(R.id.main_color_child);
-        TextView mainColorChildTV =  (TextView)mainColorChildView.findViewById(R.id.title);
+        TextView mainColorChildTV =  (TextView)mainColorChildView.findViewById(R.id.child_title);
         View themeChildView = v.findViewById(R.id.theme_child);
-        TextView themeChildTV =  (TextView)themeChildView.findViewById(R.id.title);
+        TextView themeChildTV =  (TextView)themeChildView.findViewById(R.id.child_title);
         View buttonChildView = v.findViewById(R.id.button_child);
-        TextView buttonChildTV =  (TextView)buttonChildView.findViewById(R.id.title);
+        TextView buttonChildTV =  (TextView)buttonChildView.findViewById(R.id.child_title);
         View wallPaperChildView = v.findViewById(R.id.wallpaper_child);
-        TextView wallPaperChildTV =  (TextView)wallPaperChildView.findViewById(R.id.title);
-        //listView = (ListView)v.findViewById(R.id.listview);
+        TextView wallPaperChildTV =  (TextView)wallPaperChildView.findViewById(R.id.child_title);
         generalHeadTV.setText(GENERAL);
         mainColorChildTV.setText(MAIN_COLOR);
         themeChildTV.setText(THEME);
         buttonChildTV.setText(BUTTON);
         wallPaperChildTV.setText(Wallpaper);
-
-        /*SettingAdapter settingAdapter = new SettingAdapter(getActivity().getApplicationContext());
-        listView.setAdapter(settingAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position){
-                    case 0:
-                        imageWriteReadManager = new ImageWriteReadManager(getActivity(),getActivity().getApplicationContext(),mSettingFragment);
-                        break;
-                }
-            }
-        });*/
+        wallPaperChildView.findViewById(R.id.child_preference_view_end_line).setVisibility(View.GONE);
+        mainColorChildView.setOnClickListener(mClickListener);
         return v;
     }
+
+    private View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()){
+                case R.id.main_color_child:
+
+                    break;
+                case R.id.theme_child:
+
+                    break;
+                case R.id.button_child:
+
+                    break;
+                case R.id.wallpaper_child:
+
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

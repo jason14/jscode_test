@@ -3,22 +3,33 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:layout_marginLeft="6dip"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:layout_marginRight="6dip"
+    android:minHeight="48dp"
     android:gravity="center_vertical"
     android:paddingLeft="6dip"
-    android:paddingRight="6dip">
+    android:paddingRight="6dip"
+    android:orientation="vertical">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:paddingTop="16dip"
         android:paddingBottom="16dip">
-        <TextView android:id="@+id/title"
+
+        <TextView android:id="@+id/child_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textAppearance="@style/preferenceTitleStyle" />
+            android:paddingLeft="24dip"
+            android:textAppearance="@style/preferenceChildTitleStyle" />
+
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:id="@+id/child_preference_view_end_line"
+        android:background="#cccccc"
+        android:orientation="vertical"></LinearLayout>
 </LinearLayout>

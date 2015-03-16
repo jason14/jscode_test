@@ -9,23 +9,36 @@
         android:layout_height="match_parent"
         >
         <include
+            android:layout_marginTop="16dp"
             layout="@layout/preference_head_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             android:id="@+id/general_head"/>
         <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             layout="@layout/preference_child_item"
             android:id="@+id/main_color_child"
             />
         <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             layout="@layout/preference_child_item"
             android:id="@+id/theme_child"
             />
         <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             layout="@layout/preference_child_item"
             android:id="@+id/button_child"
             />
         <include
             layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             android:id="@+id/wallpaper_child"
             />
+
+
     </LinearLayout>
 </ScrollView>

@@ -21,5 +21,26 @@
     <string name="phone_type_custom"></string>
     <string name="search">검색</string>
     <string name="setting_bg">배경화면</string>
+    <string name="blue_grey">Blue Grey</string>
+    <string name="grey">Grey</string>
+    <string name="brwon">Brown</string>
+    <string name="deep_orange">Deep Orange</string>
+    <string name="orange">Orange</string>
+    <string name="amber">Amber</string>
+    <string name="yellow">Yellow</string>
+    <string name="lime">Lime</string>
+    <string name="light_green">Light Green</string>
+    <string name="green">Green</string>
+
+    <string name="teal">Teal</string>
+    <string name="cyan">Cyan</string>
+    <string name="light_blue">Light Blue</string>
+    <string name="blue">Blue</string>
+    <string name="indigo">Indigo</string>
+
+    <string name="deep_purple">Deep Purple</string>
+    <string name="purple">Purple</string>
+    <string name="pink">Pink</string>
+    <string name="red">Red</string>
 
 </resources>

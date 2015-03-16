@@ -60,14 +60,20 @@
     </style>
 
 
-    <style name="preferenceTitleStyle">
-       <item name="android:textColor">@android:color/background_light</item>
+    <style name="preferenceChildTitleStyle">
+       <item name="android:textColor">#333333</item>
         <item name="android:textColorHint">#808080</item>
         <item name="android:textColorHighlight">#9983CC39</item>
         <item name="android:textColorLink">#5c5cff</item>
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
-
+    <style name="preferenceHeadTitleStyle">
+        <item name="android:textColor">@android:color/tertiary_text_dark</item>
+        <item name="android:textColorHint">#808080</item>
+        <item name="android:textColorHighlight">#9983CC39</item>
+        <item name="android:textColorLink">#5c5cff</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 
 </resources>

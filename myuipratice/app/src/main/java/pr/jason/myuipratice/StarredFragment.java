@@ -117,7 +117,7 @@ public class StarredFragment extends Fragment{
             scrolly = -c.getTop() + gridLayoutManager.findFirstVisibleItemPosition() * c.getHeight();
             return scrolly;
         }catch(NullPointerException e){
-            Log.e("listView.getFirstVisiblePosition()", "" + e);
+            Log.e("getFirstVisiblePosition", "" + e);
             return 0;
         }
     }
