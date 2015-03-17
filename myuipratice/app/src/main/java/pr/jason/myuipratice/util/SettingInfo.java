@@ -8,12 +8,19 @@ import android.graphics.Color;
  */
 public class SettingInfo {
 
+    public static boolean mIsInit = false;
+    public static final String IS_INIT = "IS_INIT";
+
     public static final String BUTTON_IMAGE_RESOURCE_URI = "BUTTON_IMAGE_RESOURCE_URI";
     public static final String BUTTON_IMAGE_URI = "BUTTON_IMAGE_URI";
     public static final String WALLPAPER_CATEGORY = "WALLPAPER_CATEGORY"; // Simple, Featured WallPaper, My photo  0,1,2
     public static final String WALLPAPER_URI = "WALLPAPER_URI";
     public static final String THEME_COLOR = "THEME_COLOR";
     public static final String MAIN_COLOR = "MAIN_COLOR";
+    public static final String MAIN_COLOR_TYPE = "MAIN_COLOR_TYPE";
+    public static final int COLOR_TYPE_BASIC = 0;
+    public static final int COLOR_TYPE_TONE_DOWN = 1;
+    public static final int COLOR_TYPE_PASTEL = 2;
     public static final String COUNT_OF_FAVORITE = "COUNT_OF_FAVORITE";
     public static final String SIZE_OF_FAVORITE = "SIZE_OF_FAVORITE";
     public static final String SIZE_OF_KEYPAD = "SIZE_OF_KEYPAD";
@@ -34,9 +41,10 @@ public class SettingInfo {
     public static int mKeypadLanguage;
     public static int mBeepSound;
     public static int mIndex;
-
+    public static int mMainColorType;
     public static void setCurrentSetting(Context context){
         PreferenceManager preferenceManager = new PreferenceManager(context);
+        mIsInit = true;
         mButtonImageUri = preferenceManager.getValue(BUTTON_IMAGE_URI,"");
         mButtonImageResourceUri = preferenceManager.getValue(BUTTON_IMAGE_RESOURCE_URI,"");
         mWallPaperCategory = preferenceManager.getValue(WALLPAPER_CATEGORY,0);
@@ -49,7 +57,7 @@ public class SettingInfo {
         mKeypadLanguage =  preferenceManager.getValue(KEYPAD_LANGUAGE, 0);
         mBeepSound =  preferenceManager.getValue(BEEP_SOUND, 0);
         mIndex =  preferenceManager.getValue(INDEX, 0);
-
+        mMainColorType = preferenceManager.getValue(MAIN_COLOR_TYPE , COLOR_TYPE_BASIC);
 
     }
 

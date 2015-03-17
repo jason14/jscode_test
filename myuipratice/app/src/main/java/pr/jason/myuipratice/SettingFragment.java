@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import pr.jason.myuipratice.preferences.MainColorSelectorActivity;
 import pr.jason.myuipratice.util.ImageWriteReadManager;
 
 /**
@@ -42,7 +43,7 @@ public class SettingFragment extends Fragment {
     public static final String THEME = "Theme";
     public static final String BUTTON = "Button";
     public static final String Wallpaper = "Wallpaper";
-
+    private static final int  MAIN_COLOR_REQUEST_CODE = 1001;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.setting_fragment,container,false);
@@ -72,7 +73,8 @@ public class SettingFragment extends Fragment {
         public void onClick(View v) {
             switch(v.getId()){
                 case R.id.main_color_child:
-
+                    Intent intent = new Intent(getActivity(),MainColorSelectorActivity.class);
+                    mSettingFragment.startActivityForResult(intent, MAIN_COLOR_REQUEST_CODE);
                     break;
                 case R.id.theme_child:
 
@@ -90,7 +92,7 @@ public class SettingFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        imageWriteReadManager.onActivityResult( requestCode,  resultCode,  data);
+        //imageWriteReadManager.onActivityResult( requestCode,  resultCode,  data);
 
     }
 

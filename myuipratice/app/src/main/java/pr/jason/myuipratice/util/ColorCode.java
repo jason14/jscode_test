@@ -24,7 +24,7 @@ public class ColorCode {
     public static final int GREY=17;
     public static final int BLUE_GREY=18;
 
-    public int getColorValue(int color, int code){
+    public static int getColorValue(int color, int code){
         int rgbValue = 0;
         switch (color) {
             case RED:
