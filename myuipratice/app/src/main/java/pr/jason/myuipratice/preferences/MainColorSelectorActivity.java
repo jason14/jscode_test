@@ -13,9 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import pr.jason.myuipratice.R;
 import pr.jason.myuipratice.util.ColorCode;
 import pr.jason.myuipratice.util.SettingInfo;
@@ -113,23 +110,14 @@ public class MainColorSelectorActivity extends ActionBarActivity{
             //viewHolder.bgLayoutView.setBackground(setBgColor(bgColors[position]));
             return v;
         }
-        static final String hexaDecimalPattern = "^0x([\\da-fA-F]{1,8})$";
 
         private int setBgColor(int color) {
             //int alpha = (color >>> 24) & 0xFF;
-
-            String hexForRGBConversion =
-                   "" + color;
-            String rgbValue = "";
-
-            Pattern hexPattern = Pattern.compile(hexaDecimalPattern);
-            Matcher hexMatcher = hexPattern.matcher(hexForRGBConversion);
 
             int red = (color >>> 16) & 0xFF0000;
             int green = (color >>> 8) & 0xFF00;
             int blue = (color >>> 0) & 0xFF;
 
-            Log.e("main ", "hexForRGBConversion: "+ hexForRGBConversion + "");
 
             Log.e("main color red : ", red + "");
             Log.e("main color green : ", green + "");
@@ -137,7 +125,7 @@ public class MainColorSelectorActivity extends ActionBarActivity{
 
             int rgbColor = Color.rgb(red, green, blue);
             if (colorType == SettingInfo.COLOR_TYPE_BASIC) {
-                return rgbColor;
+                return ColorCode.getColorValue(color,500);
             } else {
                 return Color.parseColor("#000000");
             }
