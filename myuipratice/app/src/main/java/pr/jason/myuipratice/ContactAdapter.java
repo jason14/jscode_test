@@ -17,6 +17,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
 
+import pr.jason.myuipratice.util.DisplayConfig;
 import pr.jason.myuipratice.util.StringMatcher;
 
 /**
@@ -74,9 +75,18 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
         }
         final ViewGroup.LayoutParams params = v.getLayoutParams();
         if(params == null){
-            v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,(int)mRowHeight));
+            if(position != 0) {
+                v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) mRowHeight));
+            }else{
+                int topItemHeight = (int)DisplayConfig.convertDpToPixel(48,mContext);
+                v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, topItemHeight));
+            }
         }else{
-            params.height = (int)mRowHeight;
+            if(position != 0) {
+                params.height = (int) mRowHeight;
+            }else{
+                params.height = (int)DisplayConfig.convertDpToPixel(48,mContext);
+            }
         }
         viewHolder.linearLayout.setGravity(Gravity.CENTER_VERTICAL);
         viewHolder.textView.setTextAppearance(mContext,R.style.myContactsListRowText);

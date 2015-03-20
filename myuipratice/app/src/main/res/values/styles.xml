@@ -25,7 +25,6 @@
         <item name="android:gravity">center_vertical</item>
     </style>
     <style name="mySearchEditText">
-
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>

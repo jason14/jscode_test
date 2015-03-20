@@ -38,8 +38,9 @@
             android:adjustViewBounds="true"
             android:id="@+id/search_bar_img"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_search_white_48dp"
+            android:src="@drawable/ic_search_white_36dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
             />
 
         <ImageView
@@ -47,7 +48,7 @@
             android:layout_height="48dp"
             android:adjustViewBounds="true"
             android:id="@+id/search_bar_group_img"
-            android:src="@drawable/ic_group_white_48dp"
+            android:src="@drawable/ic_group_white_36dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
@@ -57,9 +58,11 @@
             android:layout_height="48dp"
             android:adjustViewBounds="true"
             android:id="@+id/search_bar_add_img"
-            android:src="@drawable/ic_add_white_48dp"
+            android:src="@drawable/ic_add_white_36dp"
             android:layout_toLeftOf="@+id/search_bar_group_img"
             android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+
 
             />
         <View

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import pr.jason.myuipratice.preferences.MainColorSelectorActivity;
 import pr.jason.myuipratice.preferences.ThemeActivity;
 import pr.jason.myuipratice.util.ImageWriteReadManager;
+import pr.jason.myuipratice.util.SettingInfo;
 
 /**
  * Created by Jaesin on 2015-03-12.
@@ -60,22 +61,57 @@ public class SettingFragment extends Fragment {
 
     private  int  MAIN_COLOR_REQUEST_CODE = 1001;
     private int THEME_REQUEST_CODE = 1002;
+    View generalHeadView;
+    TextView generalHeadTV;
+    View mainColorChildView;
+    TextView mainColorChildTV;
+    View themeChildView;
+    TextView themeChildTV;
+    View buttonChildView;
+    TextView buttonChildTV;
+    View wallPaperChildView;
+    TextView wallPaperChildTV;
+    View favoriteHeadView;
+    TextView favoriteHeadTV;
+    View countOfFavoriteChildView;
+    TextView countOfFavoriteChildTV;
+    View sizeOfFavoriteChildView;
+    TextView sizeOfFavoriteChildTV;
+    View keypadHeadView;
+    TextView keypadHeadTV;
+    View sizeOfKeypadChildView;
+    TextView sizeOfKeypadChildTV;
+    View keypadLanguageChildView;
+    TextView keypadLanguageChildTV;
+    View beepSoundChildView;
+    TextView beepSoundChildTV;
+    View contactsHeadView;
+    TextView contactsHeadTV;
+    View indexChildView;
+    TextView indexChildTV;
+    View premiumHeadView;
+    TextView premiumHeadTV;
+    View inAppStoreChildView;
+    TextView inAppStoreChildTV;
+    View writeAReviewChildView;
+    TextView writeAReviewChildTV;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.setting_fragment,container,false);
         initStringValue();
-        View generalHeadView = v.findViewById(R.id.general_head);
+        generalHeadView = v.findViewById(R.id.general_head);
 
-        TextView generalHeadTV =  (TextView)generalHeadView.findViewById(R.id.head_title);
-        View mainColorChildView = v.findViewById(R.id.main_color_child);
-        TextView mainColorChildTV =  (TextView)mainColorChildView.findViewById(R.id.child_title);
-        View themeChildView = v.findViewById(R.id.theme_child);
-        TextView themeChildTV =  (TextView)themeChildView.findViewById(R.id.child_title);
-        View buttonChildView = v.findViewById(R.id.button_child);
-        TextView buttonChildTV =  (TextView)buttonChildView.findViewById(R.id.child_title);
-        View wallPaperChildView = v.findViewById(R.id.wallpaper_child);
-        TextView wallPaperChildTV =  (TextView)wallPaperChildView.findViewById(R.id.child_title);
+        generalHeadTV =  (TextView)generalHeadView.findViewById(R.id.head_title);
+        mainColorChildView = v.findViewById(R.id.main_color_child);
+        mainColorChildTV =  (TextView)mainColorChildView.findViewById(R.id.child_title);
+        themeChildView = v.findViewById(R.id.theme_child);
+        themeChildTV =  (TextView)themeChildView.findViewById(R.id.child_title);
+        buttonChildView = v.findViewById(R.id.button_child);
+        buttonChildTV =  (TextView)buttonChildView.findViewById(R.id.child_title);
+        wallPaperChildView = v.findViewById(R.id.wallpaper_child);
+        wallPaperChildTV =  (TextView)wallPaperChildView.findViewById(R.id.child_title);
         generalHeadTV.setText(GENERAL);
+
         mainColorChildTV.setText(MAIN_COLOR);
         themeChildTV.setText(THEME);
         buttonChildTV.setText(BUTTON);
@@ -84,51 +120,66 @@ public class SettingFragment extends Fragment {
         mainColorChildView.setOnClickListener(mClickListener);
         themeChildView.setOnClickListener(mClickListener);
 
-        View favoriteHeadView = v.findViewById(R.id.favorite_head);
-        TextView favoriteHeadTV =  (TextView)favoriteHeadView.findViewById(R.id.head_title);
-        View countOfFavoriteChildView = v.findViewById(R.id.count_of_favorite_child);
-        TextView countOfFavoriteChildTV =  (TextView)countOfFavoriteChildView.findViewById(R.id.child_title);
-        View sizeOfFavoriteChildView = v.findViewById(R.id.size_of_favorite_child);
-        TextView sizeOfFavoriteChildTV =  (TextView)sizeOfFavoriteChildView.findViewById(R.id.child_title);
+        favoriteHeadView = v.findViewById(R.id.favorite_head);
+        favoriteHeadTV =  (TextView)favoriteHeadView.findViewById(R.id.head_title);
+        countOfFavoriteChildView = v.findViewById(R.id.count_of_favorite_child);
+        countOfFavoriteChildTV =  (TextView)countOfFavoriteChildView.findViewById(R.id.child_title);
+        sizeOfFavoriteChildView = v.findViewById(R.id.size_of_favorite_child);
+        sizeOfFavoriteChildTV =  (TextView)sizeOfFavoriteChildView.findViewById(R.id.child_title);
         favoriteHeadTV.setText(FAVORITE);
         countOfFavoriteChildTV.setText(COUNT_OF_FAVORITE);
         sizeOfFavoriteChildTV.setText(SIZE_OF_FAVORITE);
         sizeOfFavoriteChildView.findViewById(R.id.child_preference_view_end_line).setVisibility(View.GONE);
 
-        View keypadHeadView = v.findViewById(R.id.keypad_head);
-        TextView keypadHeadTV =  (TextView)keypadHeadView.findViewById(R.id.head_title);
-        View sizeOfKeypadChildView = v.findViewById(R.id.size_of_keypad_child);
-        TextView sizeOfKeypadChildTV =  (TextView)sizeOfKeypadChildView.findViewById(R.id.child_title);
-        View keypadLanguageChildView = v.findViewById(R.id.keypad_language_child);
-        TextView keypadLanguageChildTV =  (TextView)keypadLanguageChildView.findViewById(R.id.child_title);
-        View beepSoundChildView = v.findViewById(R.id.beep_sound_child);
-        TextView beepSoundChildTV =  (TextView)beepSoundChildView.findViewById(R.id.child_title);
+        keypadHeadView = v.findViewById(R.id.keypad_head);
+        keypadHeadTV =  (TextView)keypadHeadView.findViewById(R.id.head_title);
+        sizeOfKeypadChildView = v.findViewById(R.id.size_of_keypad_child);
+        sizeOfKeypadChildTV =  (TextView)sizeOfKeypadChildView.findViewById(R.id.child_title);
+        keypadLanguageChildView = v.findViewById(R.id.keypad_language_child);
+        keypadLanguageChildTV =  (TextView)keypadLanguageChildView.findViewById(R.id.child_title);
+        beepSoundChildView = v.findViewById(R.id.beep_sound_child);
+        beepSoundChildTV =  (TextView)beepSoundChildView.findViewById(R.id.child_title);
         keypadHeadTV.setText(KEYPAD);
         sizeOfKeypadChildTV.setText(SIZE_OF_KEYPAD);
         keypadLanguageChildTV.setText(KEYPAD_LANGUAGE);
         beepSoundChildTV.setText(BEEP_SOUND);
         beepSoundChildView.findViewById(R.id.child_preference_view_end_line).setVisibility(View.GONE);
 
-        View contactsHeadView = v.findViewById(R.id.contacts_head);
-        TextView contactsHeadTV =  (TextView)contactsHeadView.findViewById(R.id.head_title);
-        View indexChildView = v.findViewById(R.id.index_child);
-        TextView indexChildTV =  (TextView)indexChildView.findViewById(R.id.child_title);
+        contactsHeadView = v.findViewById(R.id.contacts_head);
+        contactsHeadTV =  (TextView)contactsHeadView.findViewById(R.id.head_title);
+        indexChildView = v.findViewById(R.id.index_child);
+        indexChildTV =  (TextView)indexChildView.findViewById(R.id.child_title);
         contactsHeadTV.setText(CONTACTS);
         indexChildTV.setText(INDEX);
         indexChildView.findViewById(R.id.child_preference_view_end_line).setVisibility(View.GONE);
 
-        View premiumHeadView = v.findViewById(R.id.premium_head);
-        TextView premiumHeadTV =  (TextView)premiumHeadView.findViewById(R.id.head_title);
-        View inAppStoreChildView = v.findViewById(R.id.in_app_store_child);
-        TextView inAppStoreChildTV =  (TextView)inAppStoreChildView.findViewById(R.id.child_title);
-        View writeAReviewChildView = v.findViewById(R.id.write_a_review_child);
-        TextView writeAReviewChildTV =  (TextView)writeAReviewChildView.findViewById(R.id.child_title);
+        premiumHeadView = v.findViewById(R.id.premium_head);
+        premiumHeadTV =  (TextView)premiumHeadView.findViewById(R.id.head_title);
+        inAppStoreChildView = v.findViewById(R.id.in_app_store_child);
+        inAppStoreChildTV =  (TextView)inAppStoreChildView.findViewById(R.id.child_title);
+        writeAReviewChildView = v.findViewById(R.id.write_a_review_child);
+        writeAReviewChildTV =  (TextView)writeAReviewChildView.findViewById(R.id.child_title);
 
         premiumHeadTV.setText(PREMIUM);
         inAppStoreChildTV.setText(IN_APP_STORE);
         writeAReviewChildTV.setText(WRITE_A_REVIEW);
         writeAReviewChildView.findViewById(R.id.child_preference_view_end_line).setVisibility(View.GONE);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setViewSetting();
+    }
+
+    private void setViewSetting(){
+        generalHeadTV.setTextColor(SettingInfo.mMainColor);
+        favoriteHeadTV.setTextColor(SettingInfo.mMainColor);
+        keypadHeadTV.setTextColor(SettingInfo.mMainColor);
+        contactsHeadTV.setTextColor(SettingInfo.mMainColor);
+        premiumHeadTV.setTextColor(SettingInfo.mMainColor);
+
     }
 
     private void initStringValue(){
@@ -162,11 +213,11 @@ public class SettingFragment extends Fragment {
 
             switch(v.getId()){
                 case R.id.main_color_child:
-                     intent = new Intent(getActivity(),MainColorSelectorActivity.class);
+                    intent = new Intent(getActivity(),MainColorSelectorActivity.class);
                     mSettingFragment.startActivityForResult(intent, MAIN_COLOR_REQUEST_CODE);
                     break;
                 case R.id.theme_child:
-                     intent = new Intent(getActivity(),ThemeActivity.class);
+                    intent = new Intent(getActivity(),ThemeActivity.class);
                     mSettingFragment.startActivityForResult(intent, THEME_REQUEST_CODE);
                     break;
                 case R.id.button_child:

@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import pr.jason.myuipratice.util.DisplayConfig;
+import pr.jason.myuipratice.util.SettingInfo;
 import pr.jason.myuipratice.util.SoundSearcher;
 import pr.jason.myuipratice.widget.IndexableListView;
 
@@ -57,6 +59,7 @@ public class ContactsFragment extends Fragment{
     private boolean isOnAnimation = false;
     private boolean isDoneInitListView =false;
     private ContactAdapter contactAdapter;
+    private int dummyItemHeight = 0;
     public static ContactsFragment newInstance(int page,String title){
         ContactsFragment contactsFragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -110,7 +113,11 @@ public class ContactsFragment extends Fragment{
 
                 int scrollDirection = getScrollDirection(firstVisibleItem,lastFirstVisibleItem);
                 if(!isOnAnimation) {
-                    startSearchBarAni(scrollDirection);
+                    if(!listView.getmScroller().getIsIndexMove()){
+                        startSearchBarAni(scrollDirection);
+                    }else{
+                        listView.getmScroller().setIsIndexMove(false);
+                    }
                 }
                 lastFirstVisibleItem = firstVisibleItem;
             }
@@ -146,7 +153,8 @@ public class ContactsFragment extends Fragment{
             public void onGlobalLayout() {
                 if(listView.getChildAt(0)!=null){
                     if(!isDoneInitListView) {
-                        searchBarHeight = listView.getChildAt(0).getHeight();
+                        dummyItemHeight = (int)DisplayConfig.convertDpToPixel(48,getActivity().getApplicationContext());
+                        searchBarHeight = dummyItemHeight;
                         RelativeLayout.LayoutParams searchLP = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) searchBarHeight);
                         searchBar.setLayoutParams(searchLP);
                         listView.setCustomTopMargin((int) searchBarHeight);
@@ -159,6 +167,7 @@ public class ContactsFragment extends Fragment{
         searchEditText = (EditText)view.findViewById(R.id.search_et);
         searchEditText.addTextChangedListener(textWatcher);
         searchBar = (RelativeLayout)view.findViewById(R.id.search_bar_layout);
+        searchBar.setBackgroundColor(SettingInfo.mMainColor);
         return view;
     }
 
@@ -205,7 +214,7 @@ public class ContactsFragment extends Fragment{
         }
     };
 
-    public ArrayList<ContactsClass> getResultsArray(String keyworkd){
+    public ArrayList<ContactsClass> getResultsArray(String keyword){
         resultsArray.clear();
 
         return resultsArray;

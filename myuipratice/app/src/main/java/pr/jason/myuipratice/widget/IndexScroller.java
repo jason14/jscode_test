@@ -116,23 +116,32 @@ public class IndexScroller {
 
                     // It demonstrates that the motion event started from index bar
                     mIsIndexing = true;
+                    setIsIndexMove(true);
                     // Determine which section the point is in, and move the list to that section
                     mCurrentSection = getSectionByPoint(ev.getY());
                     //mListView.setSmoothScrollbarEnabled();
                     if(isVisibleSearchEt){
                         mListView.smoothScrollBy(0,0);
                         if(mIndexer.getPositionForSection(mCurrentSection)-1<0){
+                            //setIsIndexMove(false);
                             mListView.setSelection(0);
                         }else {
                             mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection) - 1);
+                           // setIsIndexMove(true);
+
                         }
                         //mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection)-1);
 
                     }else {
-                        mListView.smoothScrollBy(0,0);
-                        mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
-                       // mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection));
-
+                        if(mIndexer.getPositionForSection(mCurrentSection)-1<0){
+                            setIsIndexMove(false);
+                            mListView.setSelection(0);
+                        }else {
+                            setIsIndexMove(true);
+                            mListView.smoothScrollBy(0, 0);
+                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                            // mListView.smoothScrollToPosition(mIndexer.getPositionForSection(mCurrentSection));
+                        }
                     }
                     return true;
                 }
@@ -152,9 +161,15 @@ public class IndexScroller {
                                 mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection) - 1);
                             }
                         }else {
-                            mListView.smoothScrollBy(0,0);
-                            mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                            if(mIndexer.getPositionForSection(mCurrentSection)-1<0){
+                                setIsIndexMove(false);
+                                mListView.setSelection(0);
+                            }else {
+                                setIsIndexMove(true);
 
+                                mListView.smoothScrollBy(0, 0);
+                                mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
+                            }
 
                         }
                     }
@@ -287,6 +302,14 @@ public class IndexScroller {
         }
 
     };
+    private boolean mIsIndexMove = false;
+    public void setIsIndexMove(boolean isIndexMove){
+        mIsIndexMove = isIndexMove;
+    }
+
+    public boolean getIsIndexMove(){
+        return mIsIndexMove;
+    }
 
     public void setIsVisibleSearchEt(boolean value){
         isVisibleSearchEt = value;
