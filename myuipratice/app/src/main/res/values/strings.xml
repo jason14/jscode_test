@@ -2,7 +2,7 @@
     <!--kr-->
 <resources>
 
-    <string name="app_name">myuipratice</string>
+    <string name="app_name">Hive Dial</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="call_missed">부재중 전화</string>
@@ -31,16 +31,47 @@
     <string name="lime">Lime</string>
     <string name="light_green">Light Green</string>
     <string name="green">Green</string>
-
     <string name="teal">Teal</string>
     <string name="cyan">Cyan</string>
     <string name="light_blue">Light Blue</string>
     <string name="blue">Blue</string>
     <string name="indigo">Indigo</string>
-
     <string name="deep_purple">Deep Purple</string>
     <string name="purple">Purple</string>
     <string name="pink">Pink</string>
     <string name="red">Red</string>
+    <string name="setting_general">GENERAL</string>
+    <string name="setting_main_color">Main Color</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_button">Button</string>
+    <string name="setting_wallpaper">Wallpaper</string>
+
+    <string name="setting_favorite">FAVORITE</string>
+    <string name="setting_count_of_favorite">Count of Favorite</string>
+    <string name="setting_size_of_favorite">Size of Favorite</string>
+
+    <string name="setting_keypad">KEYPAD</string>
+    <string name="setting_size_of_keypad">Size of Keypad</string>
+    <string name="setting_keypad_language">Keypad Language</string>
+    <string name="setting_beep_sound">Beep Sound</string>
+
+    <string name="setting_contacts">CONTACTS</string>
+    <string name="setting_Index">Index</string>
+
+    <string name="setting_premium">PREMIUM</string>
+    <string name="setting_in_app_store">In App Store</string>
+    <string name="setting_write_a_review">Write a Review</string>
+
+    <string name="color_type_basic">Basic</string>
+    <string name="color_type_tone_down">Tone Down</string>
+    <string name="color_type_pastel">Pastel</string>
+
+    <string name="basic_white">Basic - White</string>
+    <string name="basic_color">Basic - Color</string>
+    <string name="basic_white_color">Basic - White <![CDATA[&]]> Color</string>
+    <string name="basic_deep_color">Basic - Deep Color</string>
+    <string name="premium_black">Premium - Black</string>
+    <string name="premium_white_blur_back">Premium - White Blur Back(No Button)</string>
+    <string name="premium_black_blur_back">Premium - Black Blur Back(No Button)</string>
 
 </resources>

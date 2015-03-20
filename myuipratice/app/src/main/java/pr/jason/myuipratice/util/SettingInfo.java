@@ -16,7 +16,10 @@ public class SettingInfo {
     public static final String WALLPAPER_CATEGORY = "WALLPAPER_CATEGORY"; // Simple, Featured WallPaper, My photo  0,1,2
     public static final String WALLPAPER_URI = "WALLPAPER_URI";
     public static final String THEME_COLOR = "THEME_COLOR";
+    public static final String THEME_POSITION = "THEME_POSITION";
+
     public static final String MAIN_COLOR = "MAIN_COLOR";
+    public static final String MAIN_COLOR_POSITION = "MAIN_COLOR_POSITION";
     public static final String MAIN_COLOR_TYPE = "MAIN_COLOR_TYPE";
     public static final int COLOR_TYPE_BASIC = 0;
     public static final int COLOR_TYPE_TONE_DOWN = 1;
@@ -33,6 +36,8 @@ public class SettingInfo {
     public static String mButtonImageResourceUri;
     public static String mWallPaperUri;
     public static int mThemeColor;
+    public static int mThemePosition;
+
     public static int mWallPaperCategory;
     public static int mMainColor;
     public static int mCountOfFavorite;
@@ -42,6 +47,7 @@ public class SettingInfo {
     public static int mBeepSound;
     public static int mIndex;
     public static int mMainColorType;
+    public static int mMainColorPosition;
     public static void setCurrentSetting(Context context){
         PreferenceManager preferenceManager = new PreferenceManager(context);
         mIsInit = true;
@@ -58,7 +64,8 @@ public class SettingInfo {
         mBeepSound =  preferenceManager.getValue(BEEP_SOUND, 0);
         mIndex =  preferenceManager.getValue(INDEX, 0);
         mMainColorType = preferenceManager.getValue(MAIN_COLOR_TYPE , COLOR_TYPE_BASIC);
-
+        mMainColorPosition = preferenceManager.getValue(MAIN_COLOR_POSITION,0);
+        mThemePosition = preferenceManager.getValue(THEME_POSITION,0);
     }
 
 

@@ -8,6 +8,7 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+        <!-- GENERAL -->
         <include
             android:layout_marginTop="16dp"
             layout="@layout/preference_head_item"
@@ -39,6 +40,86 @@
             android:id="@+id/wallpaper_child"
             />
 
+        <!-- FAVORITE -->
+        <include
+            android:layout_marginTop="32dp"
+            layout="@layout/preference_head_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/favorite_head"/>
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/count_of_favorite_child"
+            />
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/size_of_favorite_child"
+            />
+        <!-- KEYPAD -->
 
+        <include
+            android:layout_marginTop="32dp"
+            layout="@layout/preference_head_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/keypad_head"/>
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/size_of_keypad_child"
+            />
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/keypad_language_child"
+            />
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/beep_sound_child"
+            />
+
+        <!-- CONTACTS -->
+
+        <include
+            android:layout_marginTop="32dp"
+            layout="@layout/preference_head_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/contacts_head"/>
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/index_child"
+            />
+
+        <!-- PREMIUM -->
+
+        <include
+            android:layout_marginTop="32dp"
+            layout="@layout/preference_head_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/premium_head"/>
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/in_app_store_child"
+            />
+        <include
+            layout="@layout/preference_child_item"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/write_a_review_child"
+            />
     </LinearLayout>
 </ScrollView>

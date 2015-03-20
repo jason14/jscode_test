@@ -9,14 +9,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -54,9 +56,10 @@ import pr.jason.myuipratice.util.PreferenceManager;
 import pr.jason.myuipratice.util.ResoursesManager;
 import pr.jason.myuipratice.util.SettingInfo;
 import pr.jason.myuipratice.widget.CustomViewPager;
+import pr.jason.myuipratice.widget.MyCustomActivity;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends MyCustomActivity {
     private PagerSlidingTabStrip mSlidingTabLayout;
     private CustomViewPager mViewPager;
     private View mToolbar;
@@ -130,14 +133,41 @@ public class MainActivity extends ActionBarActivity {
         mSlidingTabLayout = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
 
         mSlidingTabLayout.setDividerColor(ResoursesManager.getColorResource("colorTransparent",mContext));
-        mSlidingTabLayout.setIndicatorColor(ResoursesManager.getColorResource("colorControlHighlight",mContext));
+        mSlidingTabLayout.setIndicatorColor(SettingInfo.mMainColor);
         mSlidingTabLayout.setTextColor(ResoursesManager.getColorResource("colorLightText",mContext));
         mSlidingTabLayout.setUnderlineHeight(0);
+        if(SettingInfo.mThemeColor != 0) {
+            mSlidingTabLayout.setBackgroundColor(SettingInfo.mThemeColor);
+        }else{
+            mSlidingTabLayout.setBackgroundColor(Color.parseColor("#ffffff"));
+        }
+
 
         mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                LinearLayout tabView = (LinearLayout)mSlidingTabLayout.getChildAt(0);
+                for(int i = 0; i < tabView.getChildCount(); i++) {
 
+                    if(tabView.getChildAt(i) instanceof ImageButton) {
+                        try {
+                            ImageButton ib = (ImageButton) tabView.getChildAt(i);
+                            Drawable d = ib.getDrawable();
+
+                            if(i==position) {
+                                d.setColorFilter(SettingInfo.mMainColor, PorterDuff.Mode.SRC_ATOP);
+                                ib.setImageDrawable(d);
+                                ib.invalidate();
+                            }else{
+                                d.clearColorFilter();
+                                ib.setImageDrawable(d);
+                                ib.invalidate();
+                            }
+                        }catch(Exception e){
+                            Log.e("SlidingTab Exception", ""+e);
+                        }
+                    }
+                }
             }
 
             @Override
@@ -165,8 +195,6 @@ public class MainActivity extends ActionBarActivity {
                 }else{
                     isOnPageViewScroll = false;
                 }
-
-
             }
         });
 
@@ -175,11 +203,11 @@ public class MainActivity extends ActionBarActivity {
         String appBgUri = preferenceManager.getValue(SettingInfo.WALLPAPER_URI,null);
         Log.e("App Bg Uri", appBgUri + "  ");
         if(appBgUri!=null) {
-            //appBgUri = "file://"+appBgUri;
             ImageLoader.getInstance().displayImage(appBgUri, app_bg_img, optionsBg);
         }else{
             app_bg_img.setBackgroundColor(Color.parseColor("#ffffff"));
         }
+        fab.setBackgroundColor(SettingInfo.mMainColor);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

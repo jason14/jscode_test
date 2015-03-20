@@ -1,5 +1,6 @@
 package pr.jason.myuipratice;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,8 @@ public class StarredFragment extends Fragment{
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.item_margin);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(new StarredAdapter(contactsArray,options));
 
@@ -74,8 +77,6 @@ public class StarredFragment extends Fragment{
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 scrolly = getScrollY();
-                Log.e("StarredFragment", " gridLayoutManager.findFirstVisibleItemPosition() " + gridLayoutManager.findFirstVisibleItemPosition());
-                Log.e("StarredFragment", " scrolly " + scrolly);
 
                 if(gridLayoutManager.findFirstVisibleItemPosition() == 0 &&scrolly<=0){
                     isListViewScrollTop = true;
@@ -155,6 +156,26 @@ public class StarredFragment extends Fragment{
             }
         }
         return result;
+    }
+
+    public class SpacesItemDecoration extends RecyclerView.ItemDecoration{
+        private int space;
+
+        public SpacesItemDecoration(int space){
+            this.space = space;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            outRect.left = space;
+            outRect.right = space;
+            outRect.bottom = space;
+
+            /*if(parent.getChildPosition(view)==0){
+                outRect.top = space;
+            }*/
+        }
     }
 
 }

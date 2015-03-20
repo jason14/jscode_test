@@ -10,6 +10,7 @@
         <item name="colorControlNormal">@color/colorControlNormal</item>
         <item name="windowActionBar">false</item>
         <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
 </style>
 
     <style name="Toolbar" parent="Theme.AppCompat">

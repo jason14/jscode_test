@@ -151,6 +151,7 @@ public class ContactsFragment extends Fragment{
                         searchBar.setLayoutParams(searchLP);
                         listView.setCustomTopMargin((int) searchBarHeight);
                         isDoneInitListView = true;
+
                     }
                 }
             }

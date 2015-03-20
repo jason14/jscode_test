@@ -2,10 +2,59 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ListView
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/color_list"
-        android:dividerHeight="0dp"
-        android:divider="#00ffffff"></ListView>
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:gravity="center"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toolbar Title"
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title" />
+    </android.support.v7.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:layout_marginBottom="48dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/color_list"
+            android:dividerHeight="0dp"
+            android:divider="#00ffffff"></ListView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/color_type_selector_layout"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            >
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/basic_type_btn"
+                android:background="#00ffffff"
+                android:text="@string/color_type_basic"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/tone_down_type_btn"
+                android:background="#00ffffff"
+                android:text="@string/color_type_tone_down"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/pastel_type_btn"
+                android:background="#00ffffff"
+                android:text="@string/color_type_pastel"/>
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
